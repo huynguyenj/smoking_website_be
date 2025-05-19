@@ -2,7 +2,7 @@ import express from 'express'
 import { StatusCodes } from 'http-status-codes'
 const Router = express.Router()
 
-Router.route('/user')
+Router.route('/')
   .get((req, res) => {
     res.status(StatusCodes.OK).json({ code: StatusCodes.OK, message: 'API get list user' })
   })
