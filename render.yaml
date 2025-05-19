@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: smoking_website_be
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm run production
+    branch: main
+    autoDeploy: true
