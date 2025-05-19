@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: smoking_website_be   # change this to your app's name on Render
-    env: node
-    plan: free
-    buildCommand: npm run build
-    startCommand: npm run production
-    branch: main           # or your main branch name
-    autoDeploy: true
