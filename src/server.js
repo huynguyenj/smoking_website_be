@@ -8,7 +8,7 @@ import { APIs_V1 } from '@/routes/v1'
 const START_SERVER = () => {
   const app = express()
   const hostname = 'localhost'
-  const PORT = env.APP_PORT
+  const PORT = env.APP_PORT || 3000
 
   app.use('/v1', APIs_V1)
 
