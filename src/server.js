@@ -9,7 +9,7 @@ const START_SERVER = () => {
   const app = express()
   const hostname = 'localhost'
   const PORT = env.APP_PORT || 3000
-
+  app.use(express.json()) // cho phép body có json data
   app.use('/v1', APIs_V1)
 
   app.listen(PORT, async () => {
