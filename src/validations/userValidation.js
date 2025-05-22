@@ -1,3 +1,4 @@
+import ApiError from '@/utils/ApiError'
 import { errorJsonForm } from '@/utils/customErrorMessage'
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
@@ -28,10 +29,10 @@ const registerValidation = async (req, res, next) => {
   try {
     //abortEarly: mặc định true thì khi validata nhiều trường bị lỗi nhưng nó chỉ trả về lỗi đầu tiên trong khi còn nhiều lỗi khác, để false để nó trả về hết lỗi
     await correctCondition.validateAsync(req.body, { abortEarly:false })
+    // res.status(StatusCodes.CREATED).json({ code: StatusCodes.CREATED, message: 'POST from validation: API insert USER' })
     next()
-    res.status(StatusCodes.CREATED).json({ code: StatusCodes.CREATED, message: 'POST from validation: API insert USER' })
   } catch (error) { //error nó bắt ở đây chính là error của Joi ném ra
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorJsonForm(error.details) })
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(...errorJsonForm(error.details))))
   }
 }
 

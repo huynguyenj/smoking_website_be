@@ -1,14 +1,12 @@
-import { errorJsonForm } from '@/utils/customErrorMessage'
+import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 
 const register = async (req, res, next) => {
   try {
     console.log('req.body', req.body)
-    res.status(StatusCodes.CREATED).json({ code: StatusCodes.CREATED, message: 'POST from validation: API insert USER' })
-    next()
+    throw new ApiError( StatusCodes.BAD_REQUEST, 'This is a custom error message')
   } catch (error) {
-    console.log(error)
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorJsonForm(error.details) })
+    next(error)
   }
 }
 

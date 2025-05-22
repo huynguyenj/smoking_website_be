@@ -10,10 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src",
     "clean": "rm -rf build && mkdir build",
-    "dev": "nodemon --exec babel-node src/server.js",
+    "dev": "cross-env BUILD_MODE=dev nodemon --exec babel-node src/server.js",
     "build": "npm run clean && npm run build-babel",
     "build-babel": "babel ./src -d ./build/src",
-    "production": "npm run build && node ./build/src/server.js"
+    "production": "npm run build && cross-env BUILD_MODE=production node ./build/src/server.js"
   },
   "author": "group7-SWD392",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "@babel/runtime": "^7.27.1",
     "async-exit-hook": "^2.0.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "http-status-codes": "^2.3.0",
