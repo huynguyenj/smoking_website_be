@@ -1,4 +1,4 @@
-import { errorForm } from '@/utils/customErrorMessage'
+import { errorJsonForm } from '@/utils/customErrorMessage'
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
 
@@ -31,34 +31,25 @@ const registerValidation = async (req, res, next) => {
     next()
     res.status(StatusCodes.CREATED).json({ code: StatusCodes.CREATED, message: 'POST from validation: API insert USER' })
   } catch (error) { //error nó bắt ở đây chính là error của Joi ném ra
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorForm(error.details) })
+    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorJsonForm(error.details) })
   }
-  next()
+}
+
+const loginValidation = async (req, res, next) => {
+  const loginCorrectForm = Joi.object({
+    email:  Joi.string().email( { minDomainSegments: 2, tlds:{ allow :['com', 'net'] } }).message({
+      'string.email':'Email must in the right type @gmail.com or @gmail.net'
+    })
+  })
+  try {
+    await loginCorrectForm.validateAsync(req.body)
+    next()
+  } catch (error) {
+    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorJsonForm(error.details) })
+  }
 }
 
 export const userValidation = {
-  registerValidation
+  registerValidation,
+  loginValidation
 }
-
-// Lỗi thì catch bắt đc từ error và ta console.log(error) thì nó ra thế này
-//  _original: {
-//     full_name: 'huy',
-//     user_name: 'Jeua',
-//     email: 'nguyenhuyjobs',
-//     password: 'Jeua@123'
-//   },
-//   details: [
-//     {
-//       message: 'Full name min 4 characters',
-//       path: [Array],
-//       type: 'string.min',
-//       context: [Object]
-//     },
-//     {
-//       message: 'Email must in the right type @gmail.com or @gmail.net',
-//       path: [Array],
-//       type: 'string.email',
-//       context: [Object]
-//     }
-//   ]
-// }

@@ -31,11 +31,3 @@ const START_SERVER = () => {
     process.exit(0)
   }
 })()
-
-// CONNECT_DB()
-//   .then(() => console.log('Connected to MongoDB cloud atlas successfully!'))
-//   .then(() => START_SERVER())
-//   .catch(error => {
-//     console.log(error)
-//     process.exit(0)
-//   })

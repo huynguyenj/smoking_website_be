@@ -2,7 +2,7 @@
 //algorithm: make value of other property to be the key of other value of other property in an object
 //In this case will be: message: 'Full name min 4 characters' and path: 'full_name'
 // We will make that be this: {full_name: 'Full name min 4 characters'}
-export const errorForm = (errors) => {
+export const errorJsonForm = (errors) => {
   let listError = []
   for ( let i in errors ) {
     let errorObj = {}
