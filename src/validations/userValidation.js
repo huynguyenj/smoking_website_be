@@ -32,7 +32,8 @@ const registerValidation = async (req, res, next) => {
     // res.status(StatusCodes.CREATED).json({ code: StatusCodes.CREATED, message: 'POST from validation: API insert USER' })
     next()
   } catch (error) { //error nó bắt ở đây chính là error của Joi ném ra
-    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(...errorJsonForm(error.details))))
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid information - Please fill form correctly', errorJsonForm(error.details)))
+    console.log(errorJsonForm(error.details))
   }
 }
 
@@ -46,7 +47,8 @@ const loginValidation = async (req, res, next) => {
     await loginCorrectForm.validateAsync(req.body)
     next()
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errorJsonForm(error.details) })
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid email - Please try again', errorJsonForm(error.details)))
+
   }
 }
 

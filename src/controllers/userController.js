@@ -1,15 +1,16 @@
+import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 
-const register = async (req, res, next) => {
+const registerController = async (req, res, next) => {
   try {
-    console.log('req.body', req.body)
-    throw new ApiError( StatusCodes.BAD_REQUEST, 'This is a custom error message')
+    const createdUser = await userService.registerService(req.body)
+    res.status(StatusCodes.CREATED).json(createdUser)
   } catch (error) {
     next(error)
   }
 }
 
 export const userController = {
-  register
+  registerController
 }

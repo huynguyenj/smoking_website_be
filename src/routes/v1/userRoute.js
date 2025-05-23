@@ -9,5 +9,5 @@ Router.route('/')
   .get((req, res) => {
     res.status(StatusCodes.OK).json({ code: StatusCodes.OK, message: 'API get list user' })
   })
-  .post(userValidation.registerValidation, userController.register)
+  .post(userValidation.registerValidation, userController.registerController)
 export const userRoute = Router
