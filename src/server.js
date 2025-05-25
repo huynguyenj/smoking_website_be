@@ -13,7 +13,7 @@ import { corsOptions } from './config/cors'
 const START_SERVER = () => {
   const app = express()
   const hostname = 'localhost'
-  const PORT = env.APP_PORT || 3000
+  const PORT = env.APP_PORT || process.env.PORT
 
   app.use(express.json())
   app.use(cookieParser())
