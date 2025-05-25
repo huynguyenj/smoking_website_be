@@ -33,7 +33,6 @@ const registerValidation = async (req, res, next) => {
     next()
   } catch (error) { //error nó bắt ở đây chính là error của Joi ném ra
     next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid information - Please fill form correctly', errorJsonForm(error.details)))
-    console.log(errorJsonForm(error.details))
   }
 }
 
@@ -41,6 +40,9 @@ const loginValidation = async (req, res, next) => {
   const loginCorrectForm = Joi.object({
     email:  Joi.string().email( { minDomainSegments: 2, tlds:{ allow :['com', 'net'] } }).message({
       'string.email':'Email must in the right type @gmail.com or @gmail.net'
+    }),
+    password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).message({
+      'string.pattern.base':'Password must have at least 1 Uppercase char, 1 special symbol and min 8 chars'
     })
   })
   try {

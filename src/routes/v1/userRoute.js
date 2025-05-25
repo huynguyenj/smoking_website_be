@@ -5,9 +5,11 @@ import { userValidation } from '@/validations/userValidation'
 import { userController } from '@/controllers/userController'
 const Router = express.Router()
 
-Router.route('/')
+Router.route('/register')
   .get((req, res) => {
     res.status(StatusCodes.OK).json({ code: StatusCodes.OK, message: 'API get list user' })
   })
   .post(userValidation.registerValidation, userController.registerController)
+Router.route('/login')
+  .post(userValidation.loginValidation, userController.loginController)
 export const userRoute = Router

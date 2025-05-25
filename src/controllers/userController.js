@@ -11,6 +11,16 @@ const registerController = async (req, res, next) => {
   }
 }
 
+const loginController = async (req, res, next) => {
+  try {
+    const loginUser = await userService.loginService(req.body)
+    res.status(StatusCodes.OK).json(loginUser)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
-  registerController
+  registerController,
+  loginController
 }

@@ -7,19 +7,18 @@ const USER_SCHEMA = Joi.object({
   user_name: Joi.string().min(3).max(30).required().strict().trim(),
   email: Joi.string().email().required().strict().trim(),
   password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).required().strict().trim(),
-  isVerified: Joi.boolean().default(false),
   refreshToken: Joi.string().optional().allow(null).default(null),
   created_date: Joi.date().timestamp('javascript').default(Date.now),
   updated_date: Joi.date().timestamp('javascript').default(null),
-  isActive: Joi.boolean().default(false),
-  isDeleted: Joi.boolean().default(false),
+  isActive: Joi.boolean().strict().default(true),
+  isDeleted: Joi.boolean().strict().default(false),
   role: Joi.string().valid('admin', 'member', 'coach').default('user'),
-  gender: Joi.boolean().default(null),
+  gender: Joi.boolean().strict().default(null),
   profile: Joi.object({
-    address: Joi.string().default(null),
-    experience: Joi.string().default(null),
-    birthdate: Joi.date().default(null),
-    age: Joi.number().default(null)
+    address: Joi.string().strict().default(null),
+    experience: Joi.string().strict().default(null),
+    birthdate: Joi.date().timestamp('javascript').default(null),
+    age: Joi.number().strict().default(null)
   })
 })
 
@@ -30,11 +29,11 @@ const validateBeforeInsert = async (data) => {
 const insertUserData = async (data) => {
   try {
     const validatedData = await validateBeforeInsert(data)
-//     console.log('Data: ', validatedData)
+    //console.log('Data: ', validatedData)
     const createdUser = await GET_DB().collection(USER_COLLECTION_NAME).insertOne(validatedData)
     return createdUser
   } catch (error) {
-//     console.log(errorJsonForm(error.details))
+  //console.log(errorJsonForm(error.details))
     throw new Error(error)
   }
 }
@@ -46,9 +45,15 @@ const findOneUserById = async (id) => {
     throw new Error('Error finding user by ID: ' + error.message)
   }
 }
+
+const findUserByEmail = async (email) => {
+  const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ email: email })
+  return user
+}
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
   insertUserData,
-  findOneUserById
+  findOneUserById,
+  findUserByEmail
 }
