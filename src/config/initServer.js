@@ -1,0 +1,22 @@
+import { userModel } from '@/models/userModel'
+import { passwordHelper } from '@/utils/hashPassword'
+
+const createAdminAccount = async () => {
+  const adminEmail = 'admin@gmail.com'
+  const existingAdmin = await userModel.findUserByEmail('admin@gmail.com')
+  if (existingAdmin) {
+    return
+  }
+  const hashedPassword = await passwordHelper.hashPassword('admin1234')
+  const adminData = {
+    full_name: 'Super Admin',
+    user_name: 'admin',
+    email: adminEmail,
+    password: hashedPassword
+  }
+  await userModel.insertUserData(adminData)
+}
+
+export const initServer = {
+  createAdminAccount
+}
