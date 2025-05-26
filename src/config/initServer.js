@@ -1,5 +1,6 @@
 import { userModel } from '@/models/userModel'
 import { passwordHelper } from '@/utils/hashPassword'
+import { env } from './environment'
 
 const createAdminAccount = async () => {
   const adminEmail = 'admin@gmail.com'
@@ -7,7 +8,7 @@ const createAdminAccount = async () => {
   if (existingAdmin) {
     return
   }
-  const hashedPassword = await passwordHelper.hashPassword('admin1234')
+  const hashedPassword = await passwordHelper.hashPassword(env.ADMIN_PASSWORD)
   const adminData = {
     full_name: 'Super Admin',
     user_name: 'admin',
