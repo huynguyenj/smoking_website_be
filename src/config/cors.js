@@ -5,11 +5,11 @@ import { StatusCodes } from 'http-status-codes'
 
 export const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin && env.BUILD_MODE === 'dev') {
-      callback(null, true) // Allow requests without origin in development mode for testing purposes like Postman or cURL
+    if (env.BUILD_MODE === 'dev') {
+      return callback(null, true) // Allow requests without origin in development mode for testing purposes like Postman or cURL
     }
     if (WHITELIST_DOMAIN.includes(origin)) {
-      callback(null, true) // Allow requests from whitelisted domains
+      return callback(null, true) // Allow requests from whitelisted domains
     }
     return callback(new ApiError(StatusCodes.FORBIDDEN, `Cors ${origin} policy: Not allowed by CORS`))
   },

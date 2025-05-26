@@ -9,5 +9,6 @@ export const env = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   SALT_ROUNDS: process.env.SALT_ROUNDS,
   CLIENT_URL: process.env.CLIENT_URL,
-  CLIENT_URL_PROD: process.env.CLIENT_URL_PROD
+  CLIENT_URL_PROD: process.env.CLIENT_URL_PROD,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD
 }

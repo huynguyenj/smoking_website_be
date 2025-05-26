@@ -1,5 +1,6 @@
 import { GET_DB } from '@/config/mongodb'
 import Joi from 'joi'
+import { ObjectId } from 'mongodb'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_SCHEMA = Joi.object({
@@ -39,10 +40,10 @@ const insertUserData = async (data) => {
 }
 const findOneUserById = async (id) => {
   try {
-    const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: id })
+    const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
     return user
   } catch (error) {
-    throw new Error('Error finding user by ID: ' + error.message)
+    throw new Error(error)
   }
 }
 
@@ -50,10 +51,15 @@ const findUserByEmail = async (email) => {
   const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ email: email })
   return user
 }
+
+const updateUserById = async (id, updateData) => {
+  await GET_DB().collection(USER_COLLECTION_NAME).updateOne( { _id: new ObjectId(id) }, { $set:  updateData })
+}
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
   insertUserData,
   findOneUserById,
-  findUserByEmail
+  findUserByEmail,
+  updateUserById
 }

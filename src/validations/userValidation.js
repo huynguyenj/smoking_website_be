@@ -54,7 +54,34 @@ const loginValidation = async (req, res, next) => {
   }
 }
 
+const updateValidation = async (req, res, next) => {
+  const updateCorrectForm = Joi.object({
+    full_name: Joi.string().min(3).max(50).strict().trim(),
+    user_name: Joi.string().min(3).max(30).strict().trim(),
+    email: Joi.string().email().strict().trim(),
+    password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).strict().trim(),
+    refreshToken: Joi.string().allow(null),
+    updated_date: Joi.date().timestamp('javascript').default(Date.now),
+    isActive: Joi.boolean().strict(),
+    isDeleted: Joi.boolean().strict(),
+    role: Joi.string().valid('admin', 'member', 'coach'),
+    gender: Joi.boolean().strict(),
+    profile: Joi.object({
+      address: Joi.string().strict().allow(null),
+      experience: Joi.string().strict().allow(null),
+      birthdate: Joi.date().timestamp('javascript').allow(null),
+      age: Joi.number().strict().allow(null)
+    }).optional()
+  }).min(1)
+  try {
+    await updateCorrectForm.validateAsync(req.body)
+  } catch (error) {
+    next(ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid field - Please check again!'), errorJsonForm(error.details))
+  }
+}
+
 export const userValidation = {
   registerValidation,
-  loginValidation
+  loginValidation,
+  updateValidation
 }
