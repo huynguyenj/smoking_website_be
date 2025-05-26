@@ -12,7 +12,8 @@ const createAdminAccount = async () => {
     full_name: 'Super Admin',
     user_name: 'admin',
     email: adminEmail,
-    password: hashedPassword
+    password: hashedPassword,
+    role: 'admin'
   }
   await userModel.insertUserData(adminData)
 }
