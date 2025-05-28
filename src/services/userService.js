@@ -9,7 +9,7 @@ const registerService = async (reqBody) => {
   try {
     const { email } = reqBody
     if (await userModel.findUserByEmail(email)) {
-      throw new ApiError(StatusCodes.CONFLICT, 'Email already exists. Please use a different email.')
+      throw new Error('Email already exists. Please use a different email.')
     }
     const newUser = {
       ...reqBody,
@@ -23,7 +23,7 @@ const registerService = async (reqBody) => {
       password: undefined
     }
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Error with data validation in model', error.message)
+    throw new ApiError(StatusCodes.UNAUTHORIZED, error.message)
   }
 }
 
@@ -32,13 +32,13 @@ const loginService = async (reqBody) => {
     const { email, password } = reqBody
     const user = await userModel.findUserByEmail(email)
     if (!user) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email not found. Please register first.')
+      throw new Error('Email not found. Please register first.')
     }
     if (!await passwordHelper.comparePassword(password, user.password)) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Your password is not correct! Please try again.')
+      throw new Error('Your password is not correct! Please try again.')
     }
     if (user.isDeleted || !user.isActive) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Your account has been deleted or not active. Please contact support.')
+      throw new Error('Your account has been deleted or not active. Please contact support.')
     }
     const payload = { email: user.email, role: user.role, id: user._id }
     const accessToken = jwtHelper.generateToken(payload, TOKEN_TIME.access_token_time)
@@ -50,7 +50,7 @@ const loginService = async (reqBody) => {
       refreshToken: refreshToken
     }
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    throw new ApiError(StatusCodes.UNAUTHORIZED, error.message)
   }
 }
 
@@ -76,13 +76,12 @@ const getUserInfoService = async (id) => {
   }
 }
 
-const updateUserInfoService = async (id, reqBody) => {
+const updateUserInfoService = async (id, data) => {
   try {
-    const updateData = reqBody
-    await userModel.updateUserById(id, updateData)
+    await userModel.updateUserById(id, data)
     return
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Error with data validation in model', error.message)
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
   }
 }
 

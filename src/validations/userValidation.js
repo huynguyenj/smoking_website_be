@@ -46,10 +46,10 @@ const loginValidation = async (req, res, next) => {
     })
   })
   try {
-    await loginCorrectForm.validateAsync(req.body)
+    await loginCorrectForm.validateAsync(req.body, { abortEarly: false })
     next()
   } catch (error) {
-    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid email - Please try again', errorJsonForm(error.details)))
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid email or Password - Please try again', errorJsonForm(error.details)))
 
   }
 }
@@ -60,11 +60,6 @@ const updateValidation = async (req, res, next) => {
     user_name: Joi.string().min(3).max(30).strict().trim(),
     email: Joi.string().email().strict().trim(),
     password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).strict().trim(),
-    refreshToken: Joi.string().allow(null),
-    updated_date: Joi.date().timestamp('javascript').default(Date.now),
-    isActive: Joi.boolean().strict(),
-    isDeleted: Joi.boolean().strict(),
-    role: Joi.string().valid('admin', 'member', 'coach'),
     gender: Joi.boolean().strict(),
     profile: Joi.object({
       address: Joi.string().strict().allow(null),
@@ -74,14 +69,65 @@ const updateValidation = async (req, res, next) => {
     }).optional()
   }).min(1)
   try {
-    await updateCorrectForm.validateAsync(req.body)
+    await updateCorrectForm.validateAsync(req.body, { abortEarly: false })
+    next()
   } catch (error) {
-    next(ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid field - Please check again!'), errorJsonForm(error.details))
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid field - Please check again!'), errorJsonForm(error.details))
+  }
+}
+
+const updateRoleVailidation = async (req, res, next) => {
+  const updateCorrectForm = Joi.object({
+    role: Joi.string().valid('admin', 'member', 'coach', 'user').strict().trim()
+  })
+  try {
+    await updateCorrectForm.validateAsync(req.body)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid field - Please check again!'), errorJsonForm(error.details))
+  }
+}
+
+const paginationValidation = async (req, res, next) => {
+  try {
+    const paginationSchema = Joi.object({
+      page: Joi.number().integer().min(1).default(1).required(),
+      limit: Joi.number().integer().default(5).required()
+    })
+    await paginationSchema.validateAsync(req.body, { abortEarly: false })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
+  }
+}
+
+const totalUserInMonthValidation = async (req, res, next) => {
+  try {
+    const correctCondition = Joi.object({
+      month: Joi.number().integer().min(1).max(12).required().messages({
+        'any.required': 'Month is required',
+        'number.base': 'Month must be a number',
+        'number.min': 'Month must be between 1 and 12',
+        'number.max': 'Month must be between 1 and 12'
+      }),
+      year: Joi.number().integer().min(2000).required().messages({
+        'any.required': 'Year is required',
+        'number.base': 'Year must be a number',
+        'number.min': 'Year must be greater than or equal to 2000'
+      })
+    })
+    await correctCondition.validateAsync(req.body, { abortEarly: false })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
   }
 }
 
 export const userValidation = {
   registerValidation,
   loginValidation,
-  updateValidation
+  updateValidation,
+  updateRoleVailidation,
+  paginationValidation,
+  totalUserInMonthValidation
 }
