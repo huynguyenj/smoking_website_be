@@ -1,7 +1,7 @@
 import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'
 import { COOKIES_OPTIONS } from '@/utils/constants'
-import { jsonForm } from '@/utils/formetReturnJson'
+import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
 const registerController = async (req, res, next) => {

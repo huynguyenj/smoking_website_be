@@ -1,6 +1,6 @@
 import { adminService } from '@/services/adminService'
 import ApiError from '@/utils/ApiError'
-import { jsonForm } from '@/utils/formetReturnJson'
+import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllUserController = async (req, res, next) => {

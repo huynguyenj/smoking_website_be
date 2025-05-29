@@ -12,7 +12,7 @@ Router.route('/user')
   .get(adminController.getAllUserController)
   .post(userValidation.totalUserInMonthValidation, adminController.getTotalUserInMonthController)
 Router.route('/user/role/:user_id')
-  .put(userValidation.updateRoleVailidation, adminController.changeUserRoleController)
+  .put(userValidation.updateRoleValidation, adminController.changeUserRoleController)
 Router.route('/user/pagination')
   .post(userValidation.paginationValidation, adminController.getUserPaginationController)
 export const adminRoute = Router

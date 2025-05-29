@@ -1,12 +1,11 @@
 import { GET_DB } from '@/config/mongodb'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
-import { planningModel } from './planningModel'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_SCHEMA = Joi.object({
-  full_name: Joi.string().min(3).max(50).required().strict().trim(),
-  user_name: Joi.string().min(3).max(30).required().strict().trim(),
+  full_name: Joi.string().min(3).max(50).strict().trim().default(''),
+  user_name: Joi.string().min(3).max(30).strict().trim().default(''),
   email: Joi.string().email().required().strict().trim(),
   password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).required().strict().trim(),
   refreshToken: Joi.string().optional().allow(null).default(null),
@@ -98,29 +97,7 @@ const getTotalUserInMonth = async (startDate, endDate) => {
   }
 }
 
-const getAllPlan = async (id) => {
-  try {
-    const result = await GET_DB().collection(USER_COLLECTION_NAME).aggregate([
-      {
-        $match: {
-          _id: new ObjectId(id),
-          isDeleted: false
-        }
-      },
-      {
-        $lookup:{
-          from: planningModel.PLAN_COLLECTION_NAME,
-          localField: '_id',
-          foreignField: 'user_id',
-          as: 'planList'
-        }
-      }
-    ]).toArray()
-    return result[0] || {}
-  } catch (error) {
-    throw new Error(error)
-  }
-}
+
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
@@ -130,6 +107,5 @@ export const userModel = {
   updateUserById,
   getTotalUser,
   getUserPagination,
-  getTotalUserInMonth,
-  getAllPlan
+  getTotalUserInMonth
 }

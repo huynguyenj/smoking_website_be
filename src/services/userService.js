@@ -101,7 +101,7 @@ const getNewAccessTokenService = async (refreshToken) => {
       refreshToken: newRefreshToken
     }
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Error with data validation in model', error.message)
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Error with data validation in model', error.message)
   }
 }
 export const userService = {

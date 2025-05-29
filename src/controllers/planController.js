@@ -1,5 +1,5 @@
 import { planService } from '@/services/planService'
-import { jsonForm } from '@/utils/formetReturnJson'
+import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
 const createPlanController = async (req, res, next) => {
@@ -23,7 +23,52 @@ const getAllPlanController = async (req, res, next) => {
   }
 }
 
+const updatePlanController = async (req, res, next) => {
+  try {
+    const planId = req.params.id
+    const userId = req.user.id
+    const data = req.body
+    await planService.updatePlanService(planId, userId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.CREATED, 'Update successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deletePlanController = async (req, res, next) => {
+  try {
+    const planId = req.params.id
+    const userId = req.user.id
+    await planService.deletePlanService(planId, userId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.CREATED, 'Delete successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getPlanPaginationController = async (req, res, next) => {
+  try {
+    const { limit, page } = req.body
+    const user_id = req.user.id
+    const result = await planService.getPlanPaginationService(user_id, limit, page)
+    const finalData = {
+      planList: result.data.planList,
+      pageInfo:{
+        limit: limit,
+        page: page,
+        totalPage: result.totalPage
+      }
+    }
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', finalData))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const planController = {
   createPlanController,
-  getAllPlanController
+  getAllPlanController,
+  updatePlanController,
+  deletePlanController,
+  getPlanPaginationController
 }

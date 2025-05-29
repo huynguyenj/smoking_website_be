@@ -5,14 +5,14 @@ import Joi from 'joi'
 
 const registerValidation = async (req, res, next) => {
   const correctCondition = Joi.object({
-    full_name: Joi.string().required().min(4).max(50).trim().strict().messages({
+    full_name: Joi.string().min(4).max(50).trim().strict().messages({
       'any.required': 'Full name is required',
       'string.empty': 'Full name must not be empty',
       'string.min': 'Full name min 4 characters',
       'string.max': 'Full name max 50 characters',
       'string.trim':'Full name must not have leading or trailing whitespace'
     }),
-    user_name: Joi.string().required().min(3).max(30).trim().strict().messages({
+    user_name: Joi.string().min(3).max(30).trim().strict().messages({
       'any.required': 'User name is required',
       'string.empty': 'User name must not be empty',
       'string.min': 'User name min 3 characters',
@@ -21,7 +21,7 @@ const registerValidation = async (req, res, next) => {
     }),
     email: Joi.string().email( { minDomainSegments: 2, tlds:{ allow :['com', 'net'] } }).message({
       'string.email':'Email must in the right type @gmail.com or @gmail.net'
-    }),
+    }).required(),
     password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).message({
       'string.pattern.base':'Password must have at least 1 Uppercase char, 1 special symbol and min 8 chars'
     })
@@ -76,7 +76,7 @@ const updateValidation = async (req, res, next) => {
   }
 }
 
-const updateRoleVailidation = async (req, res, next) => {
+const updateRoleValidation = async (req, res, next) => {
   const updateCorrectForm = Joi.object({
     role: Joi.string().valid('admin', 'member', 'coach', 'user').strict().trim()
   })
@@ -127,7 +127,7 @@ export const userValidation = {
   registerValidation,
   loginValidation,
   updateValidation,
-  updateRoleVailidation,
+  updateRoleValidation,
   paginationValidation,
   totalUserInMonthValidation
 }

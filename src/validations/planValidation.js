@@ -21,6 +21,38 @@ const createPlanValidation = async (req, res, next) => {
     next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation error', errorJsonForm(error.details)))
   }
 }
+
+const updatePlanValidation = async (req, res, next) => {
+  try {
+    const correctForm = Joi.object({
+      process_stage: Joi.string().valid('start', 'process', 'finish', 'cancel'),
+      health_status: Joi.string().trim().allow(null),
+      content: Joi.string().trim(),
+      start_date: Joi.date().timestamp('javascript'),
+      expected_result_date: Joi.date().timestamp('javascript')
+    })
+    await correctForm.validateAsync(req.body, { abortEarly:false })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation error', errorJsonForm(error.details)))
+  }
+}
+
+const paginationValidation = async (req, res, next) => {
+  try {
+    const paginationSchema = Joi.object({
+      page: Joi.number().integer().min(1).default(1).required(),
+      limit: Joi.number().integer().default(5).required()
+    })
+    await paginationSchema.validateAsync(req.body, { abortEarly: false })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
+  }
+}
+
 export const planValidation = {
-  createPlanValidation
+  createPlanValidation,
+  updatePlanValidation,
+  paginationValidation
 }
