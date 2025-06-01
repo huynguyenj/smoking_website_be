@@ -50,16 +50,20 @@ const getPlanPaginationController = async (req, res, next) => {
   try {
     const { limit, page } = req.body
     const user_id = req.user.id
-    const result = await planService.getPlanPaginationService(user_id, limit, page)
-    const finalData = {
-      planList: result.data.planList,
-      pageInfo:{
-        limit: limit,
-        page: page,
-        totalPage: result.totalPage
-      }
-    }
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', finalData))
+    const dataReturn = await planService.getPlanPaginationService(user_id, limit, page)
+    const result = jsonForm.paginationReturn(dataReturn.data.planList, limit, page, dataReturn.totalPage)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getRecommendPlanController = async (req, res, next) => {
+  try {
+    const { cigaretteId } = req.params
+    const userId = req.user.id
+    const dataReturn = await planService.getRecommendPlanService(cigaretteId, userId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', dataReturn))
   } catch (error) {
     next(error)
   }
@@ -70,5 +74,6 @@ export const planController = {
   getAllPlanController,
   updatePlanController,
   deletePlanController,
-  getPlanPaginationController
+  getPlanPaginationController,
+  getRecommendPlanController
 }

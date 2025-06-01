@@ -31,7 +31,7 @@ const logoutController = async (req, res, next) => {
   try {
     await userService.logoutService(req.user.id)
     res.clearCookie('refreshToken', COOKIES_OPTIONS)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Logout succesfully!'))
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Logout successfully!'))
   } catch (error) {
     next(error)
   }

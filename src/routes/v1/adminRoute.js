@@ -1,6 +1,7 @@
 import { adminController } from '@/controllers/adminController'
 import { checkRoleMiddleware } from '@/middlewares/checkRoleMiddlewares'
 import { verifyToken } from '@/middlewares/verifyTokenMiddlewares'
+import { paginationValidate } from '@/validations/paginationValidation'
 import { userValidation } from '@/validations/userValidation'
 import express from 'express'
 
@@ -14,5 +15,5 @@ Router.route('/user')
 Router.route('/user/role/:user_id')
   .put(userValidation.updateRoleValidation, adminController.changeUserRoleController)
 Router.route('/user/pagination')
-  .post(userValidation.paginationValidation, adminController.getUserPaginationController)
+  .post(paginationValidate.paginationValidation, adminController.getUserPaginationController)
 export const adminRoute = Router
