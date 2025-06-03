@@ -33,7 +33,6 @@ Router.route('/blog/public/:blogId')
   .post(paginationValidate.paginationValidation, commentController.getCommentPaginationController)
 
 //Auth middlewares
-Router.use(verifyToken)
 //Protected routes
 Router.route('/info')
   .get(userController.getUserInfoController)
@@ -41,6 +40,8 @@ Router.route('/info')
   .post(userValidation.searchUserValidation, userController.searchUserController)
 Router.route('/logout')
   .post(userController.logoutController)
+
+Router.use(verifyToken)
 
 //Plan route
 Router.route('/plan')
