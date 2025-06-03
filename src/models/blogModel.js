@@ -144,7 +144,20 @@ const deleteBlog = async (userId, blogId) => {
     throw new Error(error.message)
   }
 }
+
+const getBlogDetail = async (blogId) => {
+  try {
+    const result = await GET_DB().collection(BLOG_COLLECTION_NAME).findOne({
+      _id: new ObjectId(blogId),
+      isDeleted: false
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const blogModel = {
+  BLOG_COLLECTION_NAME,
   createBlog,
   findBlogById,
   getBlogsPagination,
@@ -152,5 +165,34 @@ export const blogModel = {
   getPrivateBlogsPagination,
   totalBlogsOfUser,
   updateBlog,
-  deleteBlog
+  deleteBlog,
+  getBlogDetail
 }
+
+  // const skip = (page - 1) * limit
+  //   const result = await GET_DB().collection(BLOG_COLLECTION_NAME).aggregate([
+  //     {
+  //       $match: {
+  //         _id: new ObjectId(blogId),
+  //         isDeleted: false
+  //       }
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: commentModel.COMMENT_COLLECTION_NAME,
+  //         let: { blogId: '$_id' },
+  //         pipeline: [
+  //           {
+  //             $match: {
+  //               $expr:{
+  //                 $and: [
+  //                   { $eq: ['$blog_id', '$$blogId'] },
+  //                   { $eq: ['isDeleted', false] }
+  //                 ]
+  //               }
+  //             }
+  //           }
+  //         ]
+  //       }
+  //     }
+  //   ])

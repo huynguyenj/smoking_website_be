@@ -2,7 +2,8 @@ import { env } from '@/config/environment'
 
 export const WHITELIST_DOMAIN = [
   env.CLIENT_URL,
-  env.CLIENT_URL_PROD
+  env.CLIENT_URL_PROD,
+  env.CLIENT_URL_PROD2
 ]
 
 export const TOKEN_TIME = {

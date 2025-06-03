@@ -60,10 +60,21 @@ const deleteBlogController = async (req, res, next) => {
     next(error)
   }
 }
+
+const getBlogDetailController = async (req, res, next) => {
+  try {
+    const { blogId } = req.params
+    const result = await blogService.getBlogDetailService(blogId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get blog successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const blogController = {
   createBlogController,
   getBlogsPaginationController,
   getBlogsPrivatePaginationController,
   updateBlogController,
-  deleteBlogController
+  deleteBlogController,
+  getBlogDetailController
 }

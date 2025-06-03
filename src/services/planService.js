@@ -31,7 +31,8 @@ const updatePlanService = async (planId, userId, data) => {
   try {
     const existPlan = await planningModel.findPlanById(planId)
     if (!existPlan) throw new Error('Plan is not exited!')
-    await planningModel.updatePlanById(planId, userId, data)
+    const result = await planningModel.updatePlanById(planId, userId, data)
+    if (!result) throw new Error('Update fail!')
     return
   } catch (error) {
     throw new ApiError(StatusCodes.NOT_FOUND, error.message)
@@ -42,7 +43,8 @@ const deletePlanService = async (planId, userId) => {
   try {
     const existPlan = await planningModel.findPlanById(planId)
     if (!existPlan) throw new Error('Plan is not existed!')
-    await planningModel.deletePlanById(planId, userId)
+    const result = await planningModel.deletePlanById(planId, userId)
+    if (!result) throw new Error('Delete fail!')
     return
   } catch (error) {
     throw new ApiError(StatusCodes.NOT_FOUND, error.message)

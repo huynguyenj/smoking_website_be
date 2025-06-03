@@ -12,6 +12,8 @@ import { paginationValidate } from '@/validations/paginationValidation'
 import multer from 'multer'
 import { blogController } from '@/controllers/blogController'
 import { blogValidation } from '@/validations/blogValidation'
+import { commentValidation } from '@/validations/commentValidation'
+import { commentController } from '@/controllers/commentController'
 const Router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 //Public route
@@ -26,6 +28,9 @@ Router.route('/token')
   .get(verifyRefreshTokenMiddlewares, userController.getNewAccessTokenController)
 Router.route('/blog/public')
   .post(paginationValidate.paginationValidation, blogController.getBlogsPaginationController)
+Router.route('/blog/public/:blogId')
+  .get(blogController.getBlogDetailController)
+  .post(paginationValidate.paginationValidation, commentController.getCommentPaginationController)
 
 //Auth middlewares
 Router.use(verifyToken)
@@ -33,6 +38,7 @@ Router.use(verifyToken)
 Router.route('/info')
   .get(userController.getUserInfoController)
   .put(userValidation.updateValidation, userController.updateUserInfoController)
+  .post(userValidation.searchUserValidation, userController.searchUserController)
 Router.route('/logout')
   .post(userController.logoutController)
 
@@ -58,7 +64,7 @@ Router.route('/cigarette/:cigaretteId')
   .put(cigaretteValidation.updateCigaretteValidation, cigaretteController.updateCigaretteController)
   .delete(cigaretteController.deleteCigaretteController)
 
-//Blog route
+//Blog route private
 Router.route('/blog')
   .post(upload.array('image'), blogValidation.createBlogVailation, blogController.createBlogController)
 Router.route('/blog/private')
@@ -66,4 +72,12 @@ Router.route('/blog/private')
 Router.route('/blog/private/edit/:blogId')
   .put(blogValidation.updateBlogVailation, upload.array('image'), blogController.updateBlogController)
   .delete(blogController.deleteBlogController)
+
+//Comment route private
+Router.route('/comment/:blogId')
+  .post(commentValidation.createCommentValidate, commentController.createCommentController)
+Router.route('/comment/:blogId/:commentId')
+  .delete(commentController.deleteCommentController)
+
+
 export const userRoute = Router

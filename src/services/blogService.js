@@ -94,10 +94,22 @@ const deleteBlogService = async (userId, blogId) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
+
+const getBlogDetailService = async (blogId) => {
+  try {
+    const blog = await blogModel.findBlogById(blogId)
+    if (!blog) throw new Error('This blog is not existed')
+    const result = await blogModel.getBlogDetail(blogId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 export const blogService = {
   createBlogService,
   getBlogsPaginationService,
   getBlogsPrivatePaginationService,
   updateBlogService,
-  deleteBlogService
+  deleteBlogService,
+  getBlogDetailService
 }

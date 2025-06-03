@@ -40,7 +40,8 @@ const getCigaretteInfoPaginationService = async (id, limit, page) => {
 
 const updateCigaretteService = async (id, cigaretteId, data) => {
   try {
-    await cigaretteModel.updateCigarette(id, cigaretteId, data)
+    const result = await cigaretteModel.updateCigarette(id, cigaretteId, data)
+    if (!result) throw new Error('Update fail!')
     return
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -50,7 +51,8 @@ const updateCigaretteService = async (id, cigaretteId, data) => {
 
 const deleteCigaretteService = async (id, cigaretteId) => {
   try {
-    await cigaretteModel.deleteCigarette(id, cigaretteId)
+    const result = await cigaretteModel.deleteCigarette(id, cigaretteId)
+    if (!result) throw new Error('Delete fail!')
     return
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)

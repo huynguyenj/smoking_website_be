@@ -1,4 +1,5 @@
 import { GET_DB } from '@/config/mongodb'
+import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 
@@ -20,7 +21,8 @@ const USER_SCHEMA = Joi.object({
     experience: Joi.string().strict().default(null),
     birthdate: Joi.date().timestamp('javascript').default(null),
     age: Joi.number().strict().default(null)
-  })
+  }),
+  friend: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([])
 })
 
 const validateBeforeInsert = async (data) => {
@@ -97,6 +99,25 @@ const getTotalUserInMonth = async (startDate, endDate) => {
   }
 }
 
+const searchUser = async (query) => {
+  try {
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).find({
+      $or: [
+        { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
+        { full_name: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } }
+      ]
+    }).project({
+      user_name: 1,
+      full_name: 1,
+      _id: 1,
+      profile: 1
+    }).limit(5).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 
 export const userModel = {
   USER_COLLECTION_NAME,
@@ -107,5 +128,6 @@ export const userModel = {
   updateUserById,
   getTotalUser,
   getUserPagination,
-  getTotalUserInMonth
+  getTotalUserInMonth,
+  searchUser
 }

@@ -75,11 +75,21 @@ const getNewAccessTokenController = async (req, res, next) => {
   }
 }
 
+const searchUserController = async (req, res, next) => {
+  try {
+    const query = req.body.search
+    const result = await userService.searchUserService(query)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Search successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   registerController,
   loginController,
   getUserInfoController,
   logoutController,
   updateUserInfoController,
-  getNewAccessTokenController
+  getNewAccessTokenController,
+  searchUserController
 }

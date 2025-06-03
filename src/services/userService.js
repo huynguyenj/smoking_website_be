@@ -104,11 +104,21 @@ const getNewAccessTokenService = async (refreshToken) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Error with data validation in model', error.message)
   }
 }
+
+const searchUserService = async (query) => {
+  try {
+    const result = await userModel.searchUser(query)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 export const userService = {
   registerService,
   loginService,
   getUserInfoService,
   updateUserInfoService,
   getNewAccessTokenService,
-  logoutService
+  logoutService,
+  searchUserService
 }

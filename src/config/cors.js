@@ -14,5 +14,5 @@ export const corsOptions = {
     return callback(new ApiError(StatusCodes.FORBIDDEN, `Cors ${origin} policy: Not allowed by CORS`))
   },
   optionsSuccessStatus: 200, // For legacy browser support
-  credential: true // Allow credentials like cookies, authorization headers, or TLS client certificates to be sent with requests
+  credentials: true // Allow credentials like cookies, authorization headers, or TLS client certificates to be sent with requests
 }
