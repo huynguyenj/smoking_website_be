@@ -1,12 +1,12 @@
 import { GET_DB } from '@/config/mongodb'
+import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
-import { planningModel } from './planningModel'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_SCHEMA = Joi.object({
-  full_name: Joi.string().min(3).max(50).required().strict().trim(),
-  user_name: Joi.string().min(3).max(30).required().strict().trim(),
+  full_name: Joi.string().min(3).max(50).strict().trim().default(''),
+  user_name: Joi.string().min(3).max(30).strict().trim().default(''),
   email: Joi.string().email().required().strict().trim(),
   password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).required().strict().trim(),
   refreshToken: Joi.string().optional().allow(null).default(null),
@@ -21,7 +21,8 @@ const USER_SCHEMA = Joi.object({
     experience: Joi.string().strict().default(null),
     birthdate: Joi.date().timestamp('javascript').default(null),
     age: Joi.number().strict().default(null)
-  })
+  }),
+  friend: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([])
 })
 
 const validateBeforeInsert = async (data) => {
@@ -98,29 +99,26 @@ const getTotalUserInMonth = async (startDate, endDate) => {
   }
 }
 
-const getAllPlan = async (id) => {
+const searchUser = async (query) => {
   try {
-    const result = await GET_DB().collection(USER_COLLECTION_NAME).aggregate([
-      {
-        $match: {
-          _id: new ObjectId(id),
-          isDeleted: false
-        }
-      },
-      {
-        $lookup:{
-          from: planningModel.PLAN_COLLECTION_NAME,
-          localField: '_id',
-          foreignField: 'user_id',
-          as: 'planList'
-        }
-      }
-    ]).toArray()
-    return result[0] || {}
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).find({
+      $or: [
+        { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
+        { full_name: { $regex: query, $options: 'i' } },
+        { email: { $regex: query, $options: 'i' } }
+      ]
+    }).project({
+      user_name: 1,
+      full_name: 1,
+      _id: 1,
+      profile: 1
+    }).limit(5).toArray()
+    return result
   } catch (error) {
     throw new Error(error)
   }
 }
+
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
@@ -131,5 +129,5 @@ export const userModel = {
   getTotalUser,
   getUserPagination,
   getTotalUserInMonth,
-  getAllPlan
+  searchUser
 }

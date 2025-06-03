@@ -1,6 +1,6 @@
 import { adminService } from '@/services/adminService'
 import ApiError from '@/utils/ApiError'
-import { jsonForm } from '@/utils/formetReturnJson'
+import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
 const getAllUserController = async (req, res, next) => {
@@ -27,15 +27,8 @@ const getUserPaginationController = async (req, res, next) => {
   try {
     const { page, limit } = req.body
     const totalUser = await adminService.getUserPaginationService(page, limit)
-    const data = {
-      users: totalUser.users,
-      pageInfo: {
-        page: page,
-        limit: limit,
-        totalPages: totalUser.totalPages
-      }
-    }
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', data))
+    const result = jsonForm.paginationReturn(totalUser.users, limit, page, totalUser.totalPages)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', result))
   } catch (error) {
     next(error)
   }

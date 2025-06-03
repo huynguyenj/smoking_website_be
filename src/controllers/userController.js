@@ -1,7 +1,7 @@
 import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'
 import { COOKIES_OPTIONS } from '@/utils/constants'
-import { jsonForm } from '@/utils/formetReturnJson'
+import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
 const registerController = async (req, res, next) => {
@@ -31,7 +31,7 @@ const logoutController = async (req, res, next) => {
   try {
     await userService.logoutService(req.user.id)
     res.clearCookie('refreshToken', COOKIES_OPTIONS)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Logout succesfully!'))
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Logout successfully!'))
   } catch (error) {
     next(error)
   }
@@ -75,11 +75,21 @@ const getNewAccessTokenController = async (req, res, next) => {
   }
 }
 
+const searchUserController = async (req, res, next) => {
+  try {
+    const query = req.body.search
+    const result = await userService.searchUserService(query)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Search successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   registerController,
   loginController,
   getUserInfoController,
   logoutController,
   updateUserInfoController,
-  getNewAccessTokenController
+  getNewAccessTokenController,
+  searchUserController
 }
