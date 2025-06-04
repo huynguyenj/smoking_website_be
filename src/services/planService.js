@@ -86,11 +86,21 @@ const getRecommendPlanService = async (cigaretteId, user_Id) => {
   }
 }
 
+const getPlanDetailService = async (blogId) => {
+  try {
+    const plan = await planningModel.findPlanById(blogId)
+    if (!plan) throw new Error('This plan is not existed')
+    return plan
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 export const planService = {
   createPlanService,
   getAllPlanService,
   updatePlanService,
   deletePlanService,
   getPlanPaginationService,
-  getRecommendPlanService
+  getRecommendPlanService,
+  getPlanDetailService
 }

@@ -62,11 +62,21 @@ const deleteCigaretteController = async (req, res, next) => {
   }
 }
 
+const getCigaretteDetailController = async (req, res, next) => {
+  try {
+    const { cigaretteId } = req.params
+    const result = await cigaretteService.getCigaretteDetailController(cigaretteId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get cigarette successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 
 export const cigaretteController = {
   createCigaretteController,
   getAllCigaretteInfoController,
   getCigaretteInfoPaginationController,
   deleteCigaretteController,
-  updateCigaretteController
+  updateCigaretteController,
+  getCigaretteDetailController
 }

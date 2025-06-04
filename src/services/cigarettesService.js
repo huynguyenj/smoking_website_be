@@ -33,7 +33,7 @@ const getCigaretteInfoPaginationService = async (id, limit, page) => {
       totalPage
     }
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    throw new ApiError(StatusCodes.BAD_GATEWAY, error.message)
   }
 }
 
@@ -44,7 +44,7 @@ const updateCigaretteService = async (id, cigaretteId, data) => {
     if (!result) throw new Error('Update fail!')
     return
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
 
@@ -55,7 +55,17 @@ const deleteCigaretteService = async (id, cigaretteId) => {
     if (!result) throw new Error('Delete fail!')
     return
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const getCigaretteDetailController = async (cigaretteId) => {
+  try {
+    const result = await cigaretteModel.findCigaretteById(cigaretteId)
+    if (!result) throw new Error('This cigarette is not exited!')
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
 export const cigaretteService = {
@@ -63,5 +73,6 @@ export const cigaretteService = {
   getAllCigaretteInfoService,
   getCigaretteInfoPaginationService,
   updateCigaretteService,
-  deleteCigaretteService
+  deleteCigaretteService,
+  getCigaretteDetailController
 }

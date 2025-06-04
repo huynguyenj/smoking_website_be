@@ -38,7 +38,7 @@ const createCigarette = async (id, data) => {
 
 const findCigaretteById = async (id) => {
   try {
-    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOne({ _id: new ObjectId(id), isDeleted: false })
     return result
   } catch (error) {
     throw new Error(error.message)

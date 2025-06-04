@@ -7,7 +7,7 @@ export const WHITELIST_DOMAIN = [
 ]
 
 export const TOKEN_TIME = {
-  access_token_time: '1h',
+  access_token_time: '3d',
   refresh_token_time: '6d'
 }
 
