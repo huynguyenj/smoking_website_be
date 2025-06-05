@@ -24,18 +24,7 @@ const uploadFile = async (files, folderName, user_id) => {
 }
 
 const deleteFile = async (removeFile) => {
-  console.log(removeFile)
-  const { data, error } = await supabase
-    .storage
-    .from(env.SUPABASE_BUCKET_NAME)
-    .remove(removeFile)
-
-  if (error) {
-    console.error('Delete error:', error.message, error)
-  } else {
-    console.log('Delete succeeded')
-    console.log('Delete data: ', data)
-  }
+  await supabase.storage.from(env.SUPABASE_BUCKET_NAME).remove(removeFile)
 }
 
 export const supabaseMethod = {

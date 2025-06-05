@@ -69,11 +69,21 @@ const getRecommendPlanController = async (req, res, next) => {
   }
 }
 
+const getPlanDetailController = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const result = await planService.getPlanDetailService(id)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get plan successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const planController = {
   createPlanController,
   getAllPlanController,
   updatePlanController,
   deletePlanController,
   getPlanPaginationController,
-  getRecommendPlanController
+  getRecommendPlanController,
+  getPlanDetailController
 }

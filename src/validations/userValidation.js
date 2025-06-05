@@ -113,7 +113,7 @@ const totalUserInMonthValidation = async (req, res, next) => {
 const searchUserValidation = async (req, res, next) => {
   try {
     const correctCondition = Joi.object({
-      search: Joi.string().strict().trim().required()
+      search: Joi.string().trim().allow('')
     })
     await correctCondition.validateAsync(req.body)
     next()

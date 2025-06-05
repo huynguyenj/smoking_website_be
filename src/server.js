@@ -11,6 +11,7 @@ import cors from 'cors'
 import { corsOptions } from './config/cors'
 import { createServer } from 'http'
 import { connectSocket } from './providers/socketio'
+import { messageService } from './services/messageService'
 const START_SERVER =async () => {
   const hostname = 'localhost'
   const PORT = env.APP_PORT || process.env.PORT
@@ -18,10 +19,11 @@ const START_SERVER =async () => {
   const httpServer = createServer(app)
   const io = await connectSocket(httpServer)
   io.on('connection', (socket) => {
-    console.log(socket.id)
-    socket.on('message', (info) => {
-      console.log(info)
-      io.emit('response', info)
+    const roomId = socket.handshake.query.roomId
+    socket.join(roomId)
+    socket.on('send-message', async ( { sender_id, receiverId, text } ) => {
+      const saveMessage = await messageService.saveMessageService(sender_id, receiverId, text)
+      io.to(roomId).emit('received-message', { ...saveMessage, receiverId: undefined })
     })
   })
   app.use(express.json())

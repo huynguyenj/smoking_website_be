@@ -22,7 +22,7 @@ const USER_SCHEMA = Joi.object({
     birthdate: Joi.date().timestamp('javascript').default(null),
     age: Joi.number().strict().default(null)
   }),
-  friend: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([])
+  friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([])
 })
 
 const validateBeforeInsert = async (data) => {
@@ -42,7 +42,7 @@ const insertUserData = async (data) => {
 }
 const findOneUserById = async (id) => {
   try {
-    const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id), isDeleted: false })
     return user
   } catch (error) {
     throw new Error(error)
@@ -101,11 +101,18 @@ const getTotalUserInMonth = async (startDate, endDate) => {
 
 const searchUser = async (query) => {
   try {
+    if (!query.trim()) return []
     const result = await GET_DB().collection(USER_COLLECTION_NAME).find({
-      $or: [
-        { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
-        { full_name: { $regex: query, $options: 'i' } },
-        { email: { $regex: query, $options: 'i' } }
+      $and:[
+        {
+          $or: [
+            { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
+            { full_name: { $regex: query, $options: 'i' } }
+          ]
+        },
+        {
+          role: { $ne: 'admin' }
+        }
       ]
     }).project({
       user_name: 1,

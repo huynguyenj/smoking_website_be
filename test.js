@@ -1,36 +1,11 @@
-//https://xzdtrdiwfhqyootwcmaf.supabase.co/storage/v1/object/public/smoking-website-image/blog-image/1748766252729-73868aca-6026-4ae4-81cc-90bfb97d4679.png
+const id2 = '6837cf908bb68e5cd823c88c'
+const id1 = '68332a972b50cdc4c01b37d5'
+const a = id1.replace(/[a-z]/g, '')
+const b = id2.replace(/[a-z]/g, '')
 
-const string = '//https://xzdtrdiwfhqyootwcmaf.supabase.co/storage/v1/object/public/smoking-website-image/blog-image/1748766252729-73868aca-6026-4ae4-81cc-90bfb97d4679.png'
+function generateRoomId(id1, id2) {
+  return [id1, id2].sort().join('_')
+}
+console.log(generateRoomId(id1, id2))
 
-const stringBeSplited = string.split('/')
-// console.log(stringBeSplited)
-/**
- Result:
- [
-  '',
-  '',
-  'https:',
-  '',
-  'xzdtrdiwfhqyootwcmaf.supabase.co',
-  'storage',
-  'v1',
-  'object',
-  'public',
-  'smoking-website-image',
-  'blog-image',
-  '1748766252729-73868aca-6026-4ae4-81cc-90bfb97d4679.png'
-]
- */
-console.log(stringBeSplited.indexOf('smoking-website-image')) // 9
-/**
- const spliceURL = stringBeSplited.splice(stringBeSplited.indexOf('smoking-website-image'))
- Result:
- [
-  'smoking-website-image',
-  'blog-image',
-  '1748766252729-73868aca-6026-4ae4-81cc-90bfb97d4679.png'
-]
-  ==> Should + 1 to take the next one not the bucket name
- */
-const spliceURL = stringBeSplited.splice(stringBeSplited.indexOf('smoking-website-image')+1).join('/')
-console.log(spliceURL) // result: blog-image/1748766252729-73868aca-6026-4ae4-81cc-90bfb97d4679.png ==> url need to remove
+console.log(generateRoomId(id2, id1))

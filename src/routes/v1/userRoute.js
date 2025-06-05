@@ -14,6 +14,7 @@ import { blogController } from '@/controllers/blogController'
 import { blogValidation } from '@/validations/blogValidation'
 import { commentValidation } from '@/validations/commentValidation'
 import { commentController } from '@/controllers/commentController'
+import { messageController } from '@/controllers/messageController'
 const Router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 //Public route
@@ -33,6 +34,7 @@ Router.route('/blog/public/:blogId')
   .post(paginationValidate.paginationValidation, commentController.getCommentPaginationController)
 
 //Auth middlewares
+Router.use(verifyToken)
 //Protected routes
 Router.route('/info')
   .get(userController.getUserInfoController)
@@ -41,7 +43,6 @@ Router.route('/info')
 Router.route('/logout')
   .post(userController.logoutController)
 
-Router.use(verifyToken)
 
 //Plan route
 Router.route('/plan')
@@ -50,6 +51,7 @@ Router.route('/plan')
 Router.route('/plan/edit/:id')
   .put(planValidation.updatePlanValidation, planController.updatePlanController)
   .delete(planController.deletePlanController)
+  .get(planController.getPlanDetailController)
 Router.route('/plan/pagination')
   .post(paginationValidate.paginationValidation, planController.getPlanPaginationController)
 Router.route('/plan/recommend/:cigaretteId')
@@ -64,6 +66,7 @@ Router.route('/cigarettes/pagination')
 Router.route('/cigarette/:cigaretteId')
   .put(cigaretteValidation.updateCigaretteValidation, cigaretteController.updateCigaretteController)
   .delete(cigaretteController.deleteCigaretteController)
+  .get(cigaretteController.getCigaretteDetailController)
 
 //Blog route private
 Router.route('/blog')
@@ -80,5 +83,13 @@ Router.route('/comment/:blogId')
 Router.route('/comment/:blogId/:commentId')
   .delete(commentController.deleteCommentController)
 
+//Message route
+Router.route('/message-history')
+  .post(messageController.getMessageHistoryController)
+Router.route('/save-message')
+  .post(messageController.saveMessage)
+Router.route('/friend')
+  .post(messageController.addFriendController)
+  .get(messageController.getFriendListController)
 
 export const userRoute = Router
