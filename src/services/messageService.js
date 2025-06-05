@@ -2,6 +2,7 @@ import { messageModel } from '@/models/messageModel'
 import { userModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { ObjectId } from 'mongodb'
 
 
 const saveMessageService = async (senderId, receiverId, text) => {
@@ -35,6 +36,10 @@ const getMessageService = async (userId, receiverId) => {
 
 const addFriendService = async (userId, friendId) => {
   try {
+    const user = await userModel.findOneUserById(userId)
+    if (userId == friendId) throw new Error('Can not add yourself as a friend')
+    const friends = user.friends
+    if (friends.map(id => id.toString()).includes(friendId)) throw new Error('This user already add!') // convert to string because in Mongo even though objectId the same value but they not equal
     const result = await messageModel.addFriend(userId, friendId)
     return result
   } catch (error) {

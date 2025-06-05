@@ -64,6 +64,14 @@ const addFriend = async (userId, friendId) => {
       },
       {
         $addToSet: { friends: new ObjectId(friendId) }
+      },
+      {
+        projection: {
+          id: 1,
+          full_name: 1,
+          user_name: 1,
+          profile: 1
+        }
       }
     )
     return result

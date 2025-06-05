@@ -101,10 +101,18 @@ const getTotalUserInMonth = async (startDate, endDate) => {
 
 const searchUser = async (query) => {
   try {
+    if (!query.trim()) return []
     const result = await GET_DB().collection(USER_COLLECTION_NAME).find({
-      $or: [
-        { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
-        { full_name: { $regex: query, $options: 'i' } }
+      $and:[
+        {
+          $or: [
+            { user_name: { $regex: query, $options: 'i' } }, // find person with name match with regex and option will avoid case-insensitive like uppercase, lowercase ==> make sure it just match no worry about these case
+            { full_name: { $regex: query, $options: 'i' } }
+          ]
+        },
+        {
+          role: { $ne: 'admin' }
+        }
       ]
     }).project({
       user_name: 1,
