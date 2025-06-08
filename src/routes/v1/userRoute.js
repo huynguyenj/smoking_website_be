@@ -33,6 +33,8 @@ Router.route('/blog/public/:blogId')
   .get(blogController.getBlogDetailController)
   .post(paginationValidate.paginationValidation, commentController.getCommentPaginationController)
 
+Router.route('/return-payment')
+  .get(userController.returnPaymentCheckController)
 //Auth middlewares
 Router.use(verifyToken)
 //Protected routes
@@ -91,5 +93,12 @@ Router.route('/save-message')
 Router.route('/friend')
   .post(messageController.addFriendController)
   .get(messageController.getFriendListController)
+
+//Feedback route
+Router.route('/feedback')
+  .post(userController.feedbackController)
+
+Router.route('/payment')
+  .get(userController.paymentController)
 
 export const userRoute = Router

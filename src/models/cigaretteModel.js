@@ -69,9 +69,10 @@ const getAllCigaretteInfoById = async (id) => {
   }
 }
 
-const getAllCigarettePagination = async (userId, limit, page) => {
+const getAllCigarettePagination = async (userId, limit, page, sort) => {
   try {
     const skipPreviousData = (page - 1) * limit
+    if (!sort) sort = -1
     const result =await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -93,6 +94,7 @@ const getAllCigarettePagination = async (userId, limit, page) => {
               }
             }
           },
+          { $sort: { create_date: sort } },
           { $skip: skipPreviousData },
           { $limit: limit }
           ],
@@ -117,7 +119,7 @@ const countTotalCigarettes = async (user_id) => {
 
 const updateCigarette = async (user_id, cigaretteId, data) => {
   try {
-    await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOneAndUpdate({
+    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOneAndUpdate({
       _id: new ObjectId(cigaretteId),
       isDeleted: false,
       user_id: new ObjectId(user_id)
@@ -126,7 +128,7 @@ const updateCigarette = async (user_id, cigaretteId, data) => {
       $set: data
     }
     )
-    return
+    return result
   } catch (error) {
     throw new Error(error.message)
   }

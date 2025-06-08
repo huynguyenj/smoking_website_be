@@ -5,11 +5,11 @@ export const generateDefaultFeature = () => {
       isActive: true
     },
     {
-      feature_name: 'chat with bot',
+      feature_name: 'standard',
       isActive: false
     },
     {
-      feature_name: 'chat with coach',
+      feature_name: 'premium',
       isActive: false
     }
   ]

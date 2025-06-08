@@ -1,3 +1,4 @@
+import { VN_PAY } from '@/providers/vnpay'
 import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'
 import { COOKIES_OPTIONS } from '@/utils/constants'
@@ -84,6 +85,42 @@ const searchUserController = async (req, res, next) => {
     next(error)
   }
 }
+
+const feedbackController = async (req, res, next) => {
+  try {
+    const data = req.body
+    const userId = req.user.id
+    await userService.feedbackService(userId, data)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Feedback successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const paymentController = async (req, res, next) => {
+  try {
+    const data = req.body
+    const userId = req.user.id
+    const ipAddr = req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress
+    const paymentURL = VN_PAY.createPaymentUrl(data, ipAddr, userId)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get payment URL successfully', { paymentURL } ))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const returnPaymentCheckController = async (req, res, next) => {
+  try {
+    const data = req.query
+    const result = await userService.paymentService(data)
+    res.redirect(result)
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   registerController,
   loginController,
@@ -91,5 +128,8 @@ export const userController = {
   logoutController,
   updateUserInfoController,
   getNewAccessTokenController,
-  searchUserController
+  searchUserController,
+  feedbackController,
+  paymentController,
+  returnPaymentCheckController
 }

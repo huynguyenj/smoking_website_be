@@ -12,7 +12,7 @@ const createBlogService = async (user_id, data, files ) => {
       user_id: user_id,
       image_url: imageURLList
     }
-    const result =await blogModel.createBlog(user_id, formData)
+    const result = await blogModel.createBlog(user_id, formData)
     const dataCreated = await blogModel.findBlogById(result.insertedId)
     return dataCreated
   } catch (error) {
@@ -20,9 +20,9 @@ const createBlogService = async (user_id, data, files ) => {
   }
 }
 
-const getBlogsPaginationService = async (limit, page) => {
+const getBlogsPaginationService = async (limit, page, sort) => {
   try {
-    const result = await blogModel.getBlogsPagination(limit, page)
+    const result = await blogModel.getBlogsPagination(limit, page, sort)
     const totalBlogs = await blogModel.totalBlogs()
     const totalPages = Math.ceil(totalBlogs / limit)
     const data = {
@@ -35,9 +35,9 @@ const getBlogsPaginationService = async (limit, page) => {
   }
 }
 
-const getBlogsPrivatePaginationService = async (userId, limit, page) => {
+const getBlogsPrivatePaginationService = async (userId, limit, page, sort) => {
   try {
-    const result = await blogModel.getPrivateBlogsPagination(userId, limit, page)
+    const result = await blogModel.getPrivateBlogsPagination(userId, limit, page, sort)
     const totalBlogs = await blogModel.totalBlogsOfUser(userId)
     const totalPages = Math.ceil(totalBlogs / limit)
     const data = {

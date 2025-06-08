@@ -1,4 +1,7 @@
+import { env } from '@/config/environment'
+import { paymentModel } from '@/models/paymentModel'
 import { userModel } from '@/models/userModel'
+import { VN_PAY } from '@/providers/vnpay'
 import ApiError from '@/utils/ApiError'
 import { TOKEN_TIME } from '@/utils/constants'
 import { passwordHelper } from '@/utils/hashPassword'
@@ -113,6 +116,48 @@ const searchUserService = async (query) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
+
+const feedbackService = async (userId, data) => {
+  try {
+    const finalData = {
+      feedback: {
+        ...data,
+        create_feedback_date: Date.now()
+      }
+    }
+    await userModel.updateUserById(userId, finalData)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const paymentService = async (data) => {
+  const returnURL = env.BUILD_MODE === 'production' ? env.CLIENT_URL_PROD2 : env.CLIENT_URL
+  const validPayment = VN_PAY.checkPaymentURL(data)
+  if (!validPayment) return `${returnURL+'/payment-status?status=invalid'}`
+  const { vnp_OrderInfo, vnp_BankCode, vnp_Amount, vnp_ResponseCode } = validPayment
+  const orderInfoDetail = vnp_OrderInfo.split(' ')
+  const userId = orderInfoDetail[orderInfoDetail.length - 1]
+  const membershipName = orderInfoDetail[2]
+
+  if (vnp_ResponseCode === '00') {
+    const paymentInfo = {
+      user_id: userId,
+      amount: parseInt(vnp_Amount) / 100,
+      description: vnp_OrderInfo,
+      type: membershipName,
+      bank_code: vnp_BankCode
+    }
+    await paymentModel.createPayment(paymentInfo)
+    return `${returnURL+'/payment-status?status=success'}`
+  } else {
+    return `${returnURL+'/payment-status?status=fail'}`
+  }
+
+}
+
+
 export const userService = {
   registerService,
   loginService,
@@ -120,5 +165,22 @@ export const userService = {
   updateUserInfoService,
   getNewAccessTokenService,
   logoutService,
-  searchUserService
+  searchUserService,
+  feedbackService,
+  paymentService
 }
+
+// [Object: null prototype] {
+//   vnp_Amount: '13000000',
+//   vnp_BankCode: 'NCB',
+//   vnp_BankTranNo: 'VNP15006719',
+//   vnp_CardType: 'ATM',
+//   vnp_OrderInfo: 'Order payment Premium with id: bc2dfa90-9c12-4236-98fb-04d67aece577',
+//   vnp_PayDate: '20250608105659',
+//   vnp_ResponseCode: '00',
+//   vnp_TmnCode: '0WEMLTPF',
+//   vnp_TransactionNo: '15006719',
+//   vnp_TransactionStatus: '00',
+//   vnp_TxnRef: 'bc2dfa90-9c12-4236-98fb-04d67aece577',
+//   vnp_SecureHash: '603e90478ec19e71aab42dc1dd609f73f2413f95a13db7cd6d2845afd3656f6f255e589d02772e62ce7deadebfaf3dad617b24e0218c166b1de82dcea408917d'
+// }

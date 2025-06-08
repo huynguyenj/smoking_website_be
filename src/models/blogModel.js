@@ -42,19 +42,21 @@ const findBlogById = async (blogId) => {
   }
 }
 
-const getBlogsPagination = async (limit, page) => {
+const getBlogsPagination = async (limit, page, sort) => {
   try {
     const skip = (page - 1)*limit
-    const result = await GET_DB().collection(BLOG_COLLECTION_NAME).find().skip(skip).limit(limit).toArray()
+    if (!sort) sort = -1
+    const result = await GET_DB().collection(BLOG_COLLECTION_NAME).find().sort({ create_date: sort }).skip(skip).limit(limit).toArray()
     return result
   } catch (error) {
     throw new Error(error.message)
   }
 }
 
-const getPrivateBlogsPagination = async (userId, limit, page) => {
+const getPrivateBlogsPagination = async (userId, limit, page, sort) => {
   try {
     const skip = (page - 1) * limit
+    if (!sort) sort = -1
     const result = await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -77,6 +79,7 @@ const getPrivateBlogsPagination = async (userId, limit, page) => {
                 }
               }
             },
+            { $sort: { create_date: sort } },
             { $skip: skip },
             { $limit: limit }
           ],

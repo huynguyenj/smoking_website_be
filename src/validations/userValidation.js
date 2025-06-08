@@ -121,6 +121,7 @@ const searchUserValidation = async (req, res, next) => {
     next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
   }
 }
+
 export const userValidation = {
   registerValidation,
   loginValidation,

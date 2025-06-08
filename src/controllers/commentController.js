@@ -16,9 +16,9 @@ const createCommentController = async (req, res, next) => {
 
 const getCommentPaginationController = async (req, res, next) => {
   try {
-    const { limit, page } = req.body
+    const { limit, page, sort } = req.body
     const { blogId } = req.params
-    const dataReturn = await commentService.getCommentPaginationService(blogId, limit, page)
+    const dataReturn = await commentService.getCommentPaginationService(blogId, limit, page, sort)
     const result = jsonForm.paginationReturn(dataReturn.data.commentList, limit, page, dataReturn.totalPage)
     res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get comments successfully', result))
   } catch (error) {

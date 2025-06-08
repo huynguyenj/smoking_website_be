@@ -11,15 +11,19 @@ const PLAN_SCHEMA = Joi.object({
   process_stage: Joi.string().valid('start', 'process', 'finish', 'cancel').strict().default('start'),
   health_status: Joi.string().strict().allow(null),
   content: Joi.string().strict().allow(null),
-  start_date: Joi.date().timestamp('javascript').default(Date.now),
-  expected_result_date: Joi.date().timestamp('javascript').default(null),
+  start_date: Joi.number().strict(),
+  expected_result_date: Joi.number().strict(),
   create_by: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
   isDeleted: Joi.boolean().strict().default(false)
 })
 
+const validateBeforeInsert = async (data) => {
+  return await PLAN_SCHEMA.validateAsync(data, { abortEarly:false })
+}
 const createPlan = async (id, data) => {
   try {
-    const validateData = await PLAN_SCHEMA.validateAsync(data)
+    const validateData = await validateBeforeInsert(data)
+    // console.log(validateData)
     const finalValidate = {
       ...validateData,
       create_by: new ObjectId(id),
@@ -119,9 +123,10 @@ const countTotalPlan = async (userId) => {
     throw new Error(error)
   }
 }
-const getPlanPagination = async (userId, limit, page) => {
+const getPlanPagination = async (userId, limit, page, sort) => {
   try {
     const skip = (page - 1) * limit
+    if (!sort) sort = -1
     const result = await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -144,6 +149,7 @@ const getPlanPagination = async (userId, limit, page) => {
                 }
               }
             },
+            { $sort: { start_date: sort } },
             { $skip: skip },
             { $limit: limit }
           ],

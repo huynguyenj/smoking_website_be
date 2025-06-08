@@ -48,9 +48,9 @@ const deletePlanController = async (req, res, next) => {
 
 const getPlanPaginationController = async (req, res, next) => {
   try {
-    const { limit, page } = req.body
+    const { limit, page, sort } = req.body
     const user_id = req.user.id
-    const dataReturn = await planService.getPlanPaginationService(user_id, limit, page)
+    const dataReturn = await planService.getPlanPaginationService(user_id, limit, page, sort)
     const result = jsonForm.paginationReturn(dataReturn.data.planList, limit, page, dataReturn.totalPage)
     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', result))
   } catch (error) {

@@ -9,7 +9,7 @@ const MESSAGE_SCHEMA = Joi.object({
   sender_id: Joi.string().strict().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
   receiver_id: Joi.string().strict().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
   content: Joi.string().strict().trim(),
-  message_date: Joi.date().timestamp('javascript').default(null),
+  message_date: Joi.date().timestamp('javascript').default(Date.now),
   isDeleted: Joi.boolean().strict().default(false)
 })
 

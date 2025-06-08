@@ -18,12 +18,14 @@ const START_SERVER =async () => {
   const app = express()
   const httpServer = createServer(app)
   const io = await connectSocket(httpServer)
-  io.on('connection', (socket) => {
+  const chatSocket = io.of('/chat')
+  chatSocket.on('connection', (socket) => {
+    console.log(socket.id)
     const roomId = socket.handshake.query.roomId
     socket.join(roomId)
     socket.on('send-message', async ( { sender_id, receiverId, text } ) => {
       const saveMessage = await messageService.saveMessageService(sender_id, receiverId, text)
-      io.to(roomId).emit('received-message', { ...saveMessage, receiverId: undefined })
+      chatSocket.to(roomId).emit('received-message', { ...saveMessage, receiverId: undefined })
     })
   })
   app.use(express.json())
