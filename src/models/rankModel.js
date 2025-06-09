@@ -11,3 +11,4 @@ const RANK_SCHEMA = Joi.object({
   achievements: Joi.array().items(Joi.string().trim()).default([]),
   record_date: Joi.date().timestamp('javascript').default(Date.now)
 })
+
