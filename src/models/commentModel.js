@@ -32,9 +32,10 @@ const createComment = async (data) => {
   }
 }
 
-const getCommentPagination = async (blogId, limit, page) => {
+const getCommentPagination = async (blogId, limit, page, sort) => {
   try {
     const skip = (page - 1) * limit
+    if (!sort) sort = -1
     const result = await GET_DB().collection(blogModel.BLOG_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -57,6 +58,7 @@ const getCommentPagination = async (blogId, limit, page) => {
                 }
               }
             },
+            { $sort: { created_date: sort } },
             { $skip: skip },
             { $limit: limit }
           ],
@@ -64,7 +66,6 @@ const getCommentPagination = async (blogId, limit, page) => {
         }
       }
     ]).toArray()
-    console.log(result)
     return result[0] || {}
   } catch (error) {
     throw new Error(error)

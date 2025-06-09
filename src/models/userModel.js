@@ -2,6 +2,7 @@ import { GET_DB } from '@/config/mongodb'
 import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
+import { membershipModel } from './membershipModel'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_SCHEMA = Joi.object({
@@ -22,7 +23,17 @@ const USER_SCHEMA = Joi.object({
     birthdate: Joi.date().timestamp('javascript').default(null),
     age: Joi.number().strict().default(null)
   }),
-  friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([])
+  friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([]),
+  feedback: Joi.object({
+    content: Joi.string().trim().allow(''),
+    star: Joi.number().strict().default(0),
+    create_feedback_date: Joi.date().timestamp('javascript').default(Date.now)
+  }),
+  membership: Joi.object({
+    membership_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE).default(null),
+    create_date: Joi.date().timestamp('javascript').default(Date.now),
+    expired_date: Joi.date().timestamp('javascript').default(null)
+  })
 })
 
 const validateBeforeInsert = async (data) => {
@@ -32,11 +43,17 @@ const validateBeforeInsert = async (data) => {
 const insertUserData = async (data) => {
   try {
     const validatedData = await validateBeforeInsert(data)
-    //console.log('Data: ', validatedData)
-    const createdUser = await GET_DB().collection(USER_COLLECTION_NAME).insertOne(validatedData)
+    const freeMembership = await membershipModel.findMembershipByTitle('Free')
+    const finalData = {
+      ...validatedData,
+      membership: {
+        membership_id: freeMembership._id,
+        create_date: Date.now()
+      }
+    }
+    const createdUser = await GET_DB().collection(USER_COLLECTION_NAME).insertOne(finalData)
     return createdUser
   } catch (error) {
-  //console.log(errorJsonForm(error.details))
     throw new Error(error)
   }
 }
@@ -70,10 +87,11 @@ const getTotalUser = async () => {
     throw new Error(error)
   }
 }
-const getUserPagination = async (page, limit) => {
+const getUserPagination = async (page, limit, sort) => {
   try {
     const skip = (page - 1) * limit
-    const users = await GET_DB().collection(USER_COLLECTION_NAME).find().skip(skip).limit(limit).toArray()
+    if (!sort) sort = -1
+    const users = await GET_DB().collection(USER_COLLECTION_NAME).find().sort({ created_date: sort }).skip(skip).limit(limit).toArray()
     const totalUsers = await GET_DB().collection(USER_COLLECTION_NAME).countDocuments()
     const totalPages = Math.ceil(totalUsers/limit)
     return {
@@ -126,6 +144,58 @@ const searchUser = async (query) => {
   }
 }
 
+const getFeedback = async (limit, page, sort) => {
+  try {
+    const skip = (page-1)*limit
+    const result = GET_DB().collection(USER_COLLECTION_NAME).find({ feedback: { $ne: null } }).project({
+      user_name: 1,
+      _id: 1,
+      feedback: 1,
+      profile: 1
+    }).sort({ 'feedback.create_feedback_date': sort }).limit(limit).skip(skip).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const deleteFeedback = async (userId) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set:{ feedback: undefined }
+    })
+    return
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateMembership = async (userId, membershipName) => {
+  try {
+    const membership = await membershipModel.findMembershipByTitle(membershipName)
+    let now = new Date()
+    if (membership.membership_title === 'Free') now = null
+    const expiredDate = now.getTime(now.setMonth() + 1)
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set:
+      { 'membership.membership_id' : membership._id,
+        'membership.create_date': now,
+        'membership.expired_date': expiredDate }
+    }
+    )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
@@ -136,5 +206,8 @@ export const userModel = {
   getTotalUser,
   getUserPagination,
   getTotalUserInMonth,
-  searchUser
+  searchUser,
+  getFeedback,
+  deleteFeedback,
+  updateMembership
 }

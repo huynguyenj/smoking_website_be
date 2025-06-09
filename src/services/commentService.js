@@ -19,9 +19,9 @@ const createCommentService = async (userId, blogId, data) => {
   }
 }
 
-const getCommentPaginationService = async (blogId, limit, page) => {
+const getCommentPaginationService = async (blogId, limit, page, sort) => {
   try {
-    const data = await commentModel.getCommentPagination(blogId, limit, page)
+    const data = await commentModel.getCommentPagination(blogId, limit, page, sort)
     const totalComment = await commentModel.totalCommentInBlog(blogId)
     const totalPage = Math.ceil(totalComment / limit)
     const result = {

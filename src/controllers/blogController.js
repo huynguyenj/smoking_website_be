@@ -16,8 +16,8 @@ const createBlogController = async (req, res, next) => {
 
 const getBlogsPaginationController = async (req, res, next) => {
   try {
-    const { limit, page } = req.body
-    const dataReturn = await blogService.getBlogsPaginationService(limit, page)
+    const { limit, page, sort } = req.body
+    const dataReturn = await blogService.getBlogsPaginationService(limit, page, sort)
     const result = jsonForm.paginationReturn(dataReturn.result, limit, page, dataReturn.totalPages)
     res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get blogs successfully', result))
   } catch (error) {
@@ -27,9 +27,9 @@ const getBlogsPaginationController = async (req, res, next) => {
 
 const getBlogsPrivatePaginationController = async (req, res, next) => {
   try {
-    const { limit, page } = req.body
+    const { limit, page, sort } = req.body
     const userId = req.user.id
-    const dataReturn = await blogService.getBlogsPrivatePaginationService(userId, limit, page)
+    const dataReturn = await blogService.getBlogsPrivatePaginationService(userId, limit, page, sort)
     const result = jsonForm.paginationReturn(dataReturn.result.blogList, limit, page, dataReturn.totalPages)
     res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get blogs successfully', result))
   } catch (error) {

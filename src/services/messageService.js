@@ -14,8 +14,7 @@ const saveMessageService = async (senderId, receiverId, text) => {
     const data = {
       sender_id: senderId,
       receiver_id: receiverId,
-      content: text,
-      message_date: Date.now()
+      content: text
     }
     const result = await messageModel.saveMessage(data)
     const message = await messageModel.findMessageById(result.insertedId)
