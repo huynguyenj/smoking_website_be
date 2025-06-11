@@ -59,7 +59,7 @@ const deleteCigaretteService = async (id, cigaretteId) => {
   }
 }
 
-const getCigaretteDetailController = async (cigaretteId) => {
+const getCigaretteDetailService = async (cigaretteId) => {
   try {
     const result = await cigaretteModel.findCigaretteById(cigaretteId)
     if (!result) throw new Error('This cigarette is not exited!')
@@ -74,5 +74,5 @@ export const cigaretteService = {
   getCigaretteInfoPaginationService,
   updateCigaretteService,
   deleteCigaretteService,
-  getCigaretteDetailController
+  getCigaretteDetailService
 }

@@ -115,4 +115,8 @@ Router.route('/achievement')
 //Rank
 Router.route('/rank')
   .get(achievementController.getRankController)
+
+//Chat AI
+Router.route('/get-advice/:cigaretteId')
+  .get(userController.chatAIController)
 export const userRoute = Router

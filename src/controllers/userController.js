@@ -1,9 +1,11 @@
+import { chatGPT } from '@/providers/chatGPT'
 import { VN_PAY } from '@/providers/vnpay'
 import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'
 import { COOKIES_OPTIONS } from '@/utils/constants'
 import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
+import { cigaretteService } from '@/services/cigarettesService'
 
 const registerController = async (req, res, next) => {
   try {
@@ -143,6 +145,20 @@ const getMembershipsController = async (req, res, next) => {
   }
 }
 
+const chatAIController = async (req, res, next) => {
+  try {
+    const { cigaretteId } = req.params
+    const dataReturn = await cigaretteService.getCigaretteDetailService(cigaretteId)
+
+    const prompt = `smoking per day ${dataReturn.smoking_frequency_per_day} times, money spent ${dataReturn.money_consumption_per_day} VND, nicotine evaluation ${dataReturn.nicotine_evaluation} / 10`
+
+    const response = await chatGPT.generateRecommendPlan(prompt)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Result', response))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   registerController,
   loginController,
@@ -155,5 +171,6 @@ export const userController = {
   paymentController,
   returnPaymentCheckController,
   getMembershipsController,
-  updateProfileController
+  updateProfileController,
+  chatAIController
 }
