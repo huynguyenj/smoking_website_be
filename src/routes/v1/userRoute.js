@@ -15,6 +15,7 @@ import { blogValidation } from '@/validations/blogValidation'
 import { commentValidation } from '@/validations/commentValidation'
 import { commentController } from '@/controllers/commentController'
 import { messageController } from '@/controllers/messageController'
+import { achievementController } from '@/controllers/achievementController'
 const Router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 //Public route
@@ -44,7 +45,8 @@ Router.route('/info')
   .post(userValidation.searchUserValidation, userController.searchUserController)
 Router.route('/logout')
   .post(userController.logoutController)
-
+Router.route('/profile')
+  .put(upload.single('profile_image'), userController.updateProfileController)
 
 //Plan route
 Router.route('/plan')
@@ -72,11 +74,11 @@ Router.route('/cigarette/:cigaretteId')
 
 //Blog route private
 Router.route('/blog')
-  .post(upload.array('image'), blogValidation.createBlogVailation, blogController.createBlogController)
+  .post(upload.array('image'), blogValidation.createBlogValidation, blogController.createBlogController)
 Router.route('/blog/private')
   .post(paginationValidate.paginationValidation, blogController.getBlogsPrivatePaginationController)
 Router.route('/blog/private/edit/:blogId')
-  .put(blogValidation.updateBlogVailation, upload.array('image'), blogController.updateBlogController)
+  .put(blogValidation.updateBlogValidation, upload.array('image'), blogController.updateBlogController)
   .delete(blogController.deleteBlogController)
 
 //Comment route private
@@ -98,7 +100,19 @@ Router.route('/friend')
 Router.route('/feedback')
   .post(userController.feedbackController)
 
+//Membership
+Router.route('/membership')
+  .get(userController.getMembershipsController)
+
+//Payment
 Router.route('/payment')
   .get(userController.paymentController)
 
+//Achievement route
+Router.route('/achievement')
+  .get(achievementController.smokingAndMoneyAchievementController)
+
+//Rank
+Router.route('/rank')
+  .get(achievementController.getRankController)
 export const userRoute = Router

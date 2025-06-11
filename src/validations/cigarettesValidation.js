@@ -9,7 +9,8 @@ const createCigaretteValidation = async (req, res, next) => {
     smoking_frequency_per_day: Joi.number().strict().required().default(0),
     money_consumption_per_day: Joi.number().strict().required().default(0),
     nicotine_evaluation: Joi.number().required().strict().default(0),
-    saving_money: Joi.number().strict().default(0)
+    saving_money: Joi.number().strict().default(0),
+    no_smoking_date: Joi.date().timestamp('javascript')
   })
   try {
     await correctForm.validateAsync(req.body)

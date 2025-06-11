@@ -21,7 +21,8 @@ const USER_SCHEMA = Joi.object({
     address: Joi.string().strict().default(null),
     experience: Joi.string().strict().default(null),
     birthdate: Joi.date().timestamp('javascript').default(null),
-    age: Joi.number().strict().default(null)
+    age: Joi.number().strict().default(null),
+    image_url: Joi.string().trim().strict().default(null)
   }),
   friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([]),
   feedback: Joi.object({
@@ -33,7 +34,8 @@ const USER_SCHEMA = Joi.object({
     membership_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE).default(null),
     create_date: Joi.date().timestamp('javascript').default(Date.now),
     expired_date: Joi.date().timestamp('javascript').default(null)
-  })
+  }),
+  rank: Joi.string().trim().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE).default(null)
 })
 
 const validateBeforeInsert = async (data) => {
@@ -74,6 +76,21 @@ const findUserByEmail = async (email) => {
 const updateUserById = async (id, updateData) => {
   try {
     await GET_DB().collection(USER_COLLECTION_NAME).updateOne( { _id: new ObjectId(id) }, { $set:  updateData })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateProfile = async (userId, profileData) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set: { profile: profileData }
+    }
+    )
   } catch (error) {
     throw new Error(error)
   }
@@ -179,7 +196,9 @@ const updateMembership = async (userId, membershipName) => {
     const membership = await membershipModel.findMembershipByTitle(membershipName)
     let now = new Date()
     if (membership.membership_title === 'Free') now = null
-    const expiredDate = now.getTime(now.setMonth() + 1)
+    now.setMonth(now.getMonth() + 1)
+    const expiredDate = now.getTime()
+
     const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate({
       _id: new ObjectId(userId),
       isDeleted: false
@@ -187,7 +206,7 @@ const updateMembership = async (userId, membershipName) => {
     {
       $set:
       { 'membership.membership_id' : membership._id,
-        'membership.create_date': now,
+        'membership.create_date': Date.now(),
         'membership.expired_date': expiredDate }
     }
     )
@@ -203,6 +222,7 @@ export const userModel = {
   findOneUserById,
   findUserByEmail,
   updateUserById,
+  updateProfile,
   getTotalUser,
   getUserPagination,
   getTotalUserInMonth,

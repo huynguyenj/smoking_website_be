@@ -3,7 +3,7 @@ import { errorJsonForm } from '@/utils/customErrorMessage'
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
 
-const createBlogVailation = async (req, res, next) => {
+const createBlogValidation = async (req, res, next) => {
   const correctForm = Joi.object({
     title: Joi.string().strict().required(),
     content: Joi.string().strict().required()
@@ -16,7 +16,7 @@ const createBlogVailation = async (req, res, next) => {
   }
 }
 
-const updateBlogVailation = async (req, res, next) => {
+const updateBlogValidation = async (req, res, next) => {
   const correctForm = Joi.object({
     title: Joi.string().strict().required(),
     content: Joi.string().strict().required(),
@@ -31,6 +31,6 @@ const updateBlogVailation = async (req, res, next) => {
 }
 
 export const blogValidation = {
-  createBlogVailation,
-  updateBlogVailation
+  createBlogValidation,
+  updateBlogValidation
 }

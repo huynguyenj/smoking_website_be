@@ -60,13 +60,7 @@ const updateValidation = async (req, res, next) => {
     user_name: Joi.string().min(3).max(30).strict().trim(),
     email: Joi.string().email().strict().trim(),
     password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$')).strict().trim(),
-    gender: Joi.boolean().strict(),
-    profile: Joi.object({
-      address: Joi.string().strict().allow(null),
-      experience: Joi.string().strict().allow(null),
-      birthdate: Joi.date().timestamp('javascript').allow(null),
-      age: Joi.number().strict().allow(null)
-    }).optional()
+    gender: Joi.boolean().strict()
   }).min(1)
   try {
     await updateCorrectForm.validateAsync(req.body, { abortEarly: false })

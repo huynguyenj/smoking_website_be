@@ -1,12 +1,8 @@
-const date = new Date()
-const now = Date.now()
-const tomorrow = new Date (date.setDate(date.getDate() + 1)).getTime()
-console.log(now)
-console.log((tomorrow - now))
+// let now = new Date()
+// const expiredDate = now.getTime(now.setMonth() + 1)
+// console.log(Date.now())
+const totalDayOutSmoke = 20
+const totalSaving = 20
 
-const datas = [1, 2, 3, 4]
-const current = 0
-const nextCurrent = 0
-datas.forEach(data => {
-  if 
- } )
+const achievement = [ totalDayOutSmoke, totalSaving ]
+console.log(achievement)

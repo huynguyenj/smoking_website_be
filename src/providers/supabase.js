@@ -23,13 +23,29 @@ const uploadFile = async (files, folderName, user_id) => {
   return listURL
 }
 
+const uploadAFile = async (file, folderName, userId) => {
+  const fileExt = path.extname(file.originalname)
+  const fileName = `${folderName}/${userId}/${Date.now()}-${uuidv4()}${fileExt}`
+  const { error } = await supabase.storage.from(env.SUPABASE_BUCKET_NAME).upload(fileName, file.buffer, {
+    contentType: file.mimetype
+  })
+
+  if (error) {
+    throw new Error('Image upload failed', error.message)
+  }
+
+  const image = supabase.storage.from(env.SUPABASE_BUCKET_NAME).getPublicUrl(fileName)
+  return image.data.publicUrl
+}
+
 const deleteFile = async (removeFile) => {
   await supabase.storage.from(env.SUPABASE_BUCKET_NAME).remove(removeFile)
 }
 
 export const supabaseMethod = {
   uploadFile,
-  deleteFile
+  deleteFile,
+  uploadAFile
 }
 
 // 1748778142343-c9d07491-0526-4ae8-a3c0-b47d3a517fcd.png
