@@ -19,6 +19,7 @@ export const env = {
   VNP_SECRET_KEY:process.env.VNP_SECRET_KEY,
   VNPAY_URL:process.env.VNPAY_URL,
   VNP_RETURN_URL_LOCAL:process.env.VNP_RETURN_URL_LOCAL,
-  VNP_RETURN_URL_PROD: process.env.VNP_RETURN_URL_PROD
-
+  VNP_RETURN_URL_PROD: process.env.VNP_RETURN_URL_PROD,
+  OPEN_AI_KEY: process.env.OPEN_AI_KEY,
+  SERVER_URL_PROD: process.env.SERVER_URL_PROD
 }
