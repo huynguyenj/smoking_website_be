@@ -86,6 +86,16 @@ const updateMembershipController = async (req, res, next) => {
   }
 }
 
+const deleteMembershipController = async (req, res, next) => {
+  try {
+    const { membershipId } = req.params
+    await adminService.deleteMembershipService(membershipId)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Delete membership successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getMembershipsController = async (req, res, next) => {
   try {
     const result = await adminService.getMembershipsService()
@@ -112,6 +122,38 @@ const getRevenueController = async (req, res, next) => {
     next(error)
   }
 }
+
+const getRankPaginationController = async (req, res, next) => {
+  try {
+    const { page, limit, sort } = req.body
+    const dataReturn = await adminService.getRankPaginationService(page, limit, sort)
+    const finalResult = jsonForm.paginationReturn(dataReturn.result, limit, page, dataReturn.totalPage)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get ranks successfully!', finalResult))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getUserInfoByRankIdController = async (req, res, next) => {
+  try {
+    const { rankId } = req.params
+    const result = await adminService.getUserInfoByRankIdService(rankId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get userInfo successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateRankPositionController = async (req, res, next) => {
+  try {
+    const { rankId } = req.params
+    const data = req.body
+    await adminService.updateRankPositionService(rankId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
 export const adminController = {
   getAllUserController,
   changeUserRoleController,
@@ -123,5 +165,9 @@ export const adminController = {
   updateMembershipController,
   getMembershipsController,
   getTotalPaymentController,
-  getRevenueController
+  getRevenueController,
+  getRankPaginationController,
+  getUserInfoByRankIdController,
+  deleteMembershipController,
+  updateRankPositionController
 }

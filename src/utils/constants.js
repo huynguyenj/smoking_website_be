@@ -20,5 +20,11 @@ export const COOKIES_OPTIONS = {
 
 
 export const NAME_FOLDER_SUPABASE= {
-  blog: 'blog-image'
+  blog: 'blog-image',
+  user: 'user-image'
+}
+
+export const REQUIRED_FOR_STAR = {
+  minMoney: 100000,
+  minDayNoSmoke: 2
 }

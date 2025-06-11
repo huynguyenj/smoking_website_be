@@ -14,7 +14,7 @@ const CIGARETTE_SCHEMA = Joi.object({
   nicotine_evaluation: Joi.number().required().strict().default(0),
   create_date: Joi.date().timestamp('javascript').default(Date.now),
   update_date: Joi.date().timestamp('javascript').default(null),
-  no_smoking_date: Joi.date().timestamp('javascript').default(null),
+  no_smoking_date: Joi.number().strict().default(null),
   isDeleted: Joi.boolean().strict().default(false)
 })
 
@@ -25,12 +25,28 @@ const validateData = async (data) => {
 const createCigarette = async (id, data) => {
   try {
     const dataValidation = await validateData(data)
+    const dataList = await getAllCigaretteInfoById(id)
     const finalData = {
       ...dataValidation,
       user_id: new ObjectId(id)
     }
-    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
-    return result
+
+    const recentCreatedList = dataList['listCigarette']
+    if (recentCreatedList.length === 0) {
+      const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
+      return result
+    }
+
+    const recentlyCreatedOne = recentCreatedList[recentCreatedList.length - 1]
+    const isADay = dataValidation.create_date - recentlyCreatedOne.create_date
+    const aDay = 60 * 60 * 24 * 1000
+
+    if (isADay > aDay) {
+      const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
+      return result
+    } else {
+      throw new Error('You can not create more than a cigarette in a day')
+    }
   } catch (error) {
     throw new Error(error.message)
   }
@@ -57,9 +73,24 @@ const getAllCigaretteInfoById = async (id) => {
       {
         $lookup: {
           from: CIGARETTE_COLLECTION_NAME,
-          localField: '_id',
-          foreignField: 'user_id',
+          let: { userIdInUserCollection: '$_id' },
+          pipeline:[{
+            $match:{
+              $expr:{
+                $and:[
+                  { $eq: ['$user_id', '$$userIdInUserCollection'] },
+                  { $eq: ['$isDeleted', false] }
+                ]
+              }
+            }
+          }
+          ],
           as: 'listCigarette'
+        }
+      },
+      {
+        $project: {
+          listCigarette: 1
         }
       }
     ]).toArray()
@@ -100,6 +131,11 @@ const getAllCigarettePagination = async (userId, limit, page, sort) => {
           ],
           as: 'paginationList'
         }
+      },
+      {
+        $project: {
+          paginationList: 1
+        }
       }
     ]).toArray()
     return result[0] || {}
@@ -116,7 +152,40 @@ const countTotalCigarettes = async (user_id) => {
     throw new Error(error.message)
   }
 }
-
+const countMoneyAndNoSmoking = async (userId) => {
+  try {
+    const result = await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
+      {
+        $match: {
+          _id: new ObjectId(userId),
+          isDeleted: false
+        }
+      },
+      {
+        $lookup: {
+          from: CIGARETTE_COLLECTION_NAME,
+          let: { userId: '$_id' },
+          pipeline: [{
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$user_id', '$$userId'] },
+                  { $eq: ['$isDeleted', false] },
+                  { $ne: ['$no_smoking_date', null] },
+                  { $ne: ['$saving_money', null] }
+                ]
+              }
+            }
+          }],
+          as: 'listResult'
+        }
+      }
+    ]).toArray()
+    return result[0] || {}
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
 const updateCigarette = async (user_id, cigaretteId, data) => {
   try {
     const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOneAndUpdate({
@@ -158,5 +227,6 @@ export const cigaretteModel = {
   countTotalCigarettes,
   getAllCigarettePagination,
   updateCigarette,
-  deleteCigarette
+  deleteCigarette,
+  countMoneyAndNoSmoking
 }

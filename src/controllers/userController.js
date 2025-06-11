@@ -62,6 +62,18 @@ const updateUserInfoController = async (req, res, next) => {
   }
 }
 
+const updateProfileController = async (req, res, next) => {
+  try {
+    const file = req.file
+    const data = req.body
+    const userId = req.user.id
+    await userService.updateProfileService(userId, data, file)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getNewAccessTokenController = async (req, res, next) => {
   try {
 
@@ -121,6 +133,16 @@ const returnPaymentCheckController = async (req, res, next) => {
     next(error)
   }
 }
+
+const getMembershipsController = async (req, res, next) => {
+  try {
+    const result = await userService.getMembershipsService()
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get memberships successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   registerController,
   loginController,
@@ -131,5 +153,7 @@ export const userController = {
   searchUserController,
   feedbackController,
   paymentController,
-  returnPaymentCheckController
+  returnPaymentCheckController,
+  getMembershipsController,
+  updateProfileController
 }

@@ -1,9 +1,11 @@
 import { env } from '@/config/environment'
+import { membershipModel } from '@/models/membershipModel'
 import { paymentModel } from '@/models/paymentModel'
 import { userModel } from '@/models/userModel'
+import { supabaseMethod } from '@/providers/supabase'
 import { VN_PAY } from '@/providers/vnpay'
 import ApiError from '@/utils/ApiError'
-import { TOKEN_TIME } from '@/utils/constants'
+import { NAME_FOLDER_SUPABASE, TOKEN_TIME } from '@/utils/constants'
 import { passwordHelper } from '@/utils/hashPassword'
 import { jwtHelper } from '@/utils/jwtHelper'
 import { StatusCodes } from 'http-status-codes'
@@ -81,7 +83,24 @@ const getUserInfoService = async (id) => {
 
 const updateUserInfoService = async (id, data) => {
   try {
+    delete data['role'] // avoid user update their role by their own
+    const isEmailExisted = await userModel.findUserByEmail(data['email'])
+    if (isEmailExisted) throw new Error('This is email already exist please try another one!')
     await userModel.updateUserById(id, data)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+  }
+}
+
+const updateProfileService = async (userId, data, file) => {
+  try {
+    const imageURLList = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.user, userId)
+    const finalData = {
+      ...data,
+      image_url: imageURLList
+    }
+    await userModel.updateProfile(userId, finalData)
     return
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -140,7 +159,6 @@ const paymentService = async (data) => {
   const orderInfoDetail = vnp_OrderInfo.split(' ')
   const userId = orderInfoDetail[orderInfoDetail.length - 1]
   const membershipName = orderInfoDetail[2]
-
   if (vnp_ResponseCode === '00') {
     const paymentInfo = {
       user_id: userId,
@@ -150,6 +168,10 @@ const paymentService = async (data) => {
       bank_code: vnp_BankCode
     }
     await paymentModel.createPayment(paymentInfo)
+    const updateRole = {
+      role: 'member'
+    }
+    await userModel.updateUserById(userId, updateRole)
     return `${returnURL+'/payment-status?status=success'}`
   } else {
     return `${returnURL+'/payment-status?status=fail'}`
@@ -157,6 +179,15 @@ const paymentService = async (data) => {
 
 }
 
+const getMembershipsService = async () => {
+  try {
+    const result = await membershipModel.getMemberships()
+    if (!result || result.length === 0) throw new Error('There are no membership has been created!')
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 
 export const userService = {
   registerService,
@@ -167,20 +198,7 @@ export const userService = {
   logoutService,
   searchUserService,
   feedbackService,
-  paymentService
+  paymentService,
+  getMembershipsService,
+  updateProfileService
 }
-
-// [Object: null prototype] {
-//   vnp_Amount: '13000000',
-//   vnp_BankCode: 'NCB',
-//   vnp_BankTranNo: 'VNP15006719',
-//   vnp_CardType: 'ATM',
-//   vnp_OrderInfo: 'Order payment Premium with id: bc2dfa90-9c12-4236-98fb-04d67aece577',
-//   vnp_PayDate: '20250608105659',
-//   vnp_ResponseCode: '00',
-//   vnp_TmnCode: '0WEMLTPF',
-//   vnp_TransactionNo: '15006719',
-//   vnp_TransactionStatus: '00',
-//   vnp_TxnRef: 'bc2dfa90-9c12-4236-98fb-04d67aece577',
-//   vnp_SecureHash: '603e90478ec19e71aab42dc1dd609f73f2413f95a13db7cd6d2845afd3656f6f255e589d02772e62ce7deadebfaf3dad617b24e0218c166b1de82dcea408917d'
-// }

@@ -1,5 +1,6 @@
 import { membershipModel } from '@/models/membershipModel'
 import { paymentModel } from '@/models/paymentModel'
+import { rankModel } from '@/models/rankModel'
 import { userModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
@@ -97,6 +98,14 @@ const updateMembershipService = async (membershipId, data) => {
   }
 }
 
+const deleteMembershipService = async (membershipId) => {
+  try {
+    await membershipModel.deleteMembership(membershipId)
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
 const getMembershipsService = async () => {
   try {
     const result = await membershipModel.getMemberships()
@@ -124,6 +133,37 @@ const getRevenueService = async () => {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
+
+const getRankPaginationService = async (page, limit, sort) => {
+  try {
+    const result = await rankModel.getRankPagination(page, limit, sort)
+    const totalData = await rankModel.getTotalRank()
+    const totalPage = Math.ceil(totalData / limit)
+    return {
+      result,
+      totalPage
+    }
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const getUserInfoByRankIdService = async (rankId) => {
+  try {
+    const result = await rankModel.findUserByRankId(rankId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const updateRankPositionService = async (rankId, data) => {
+  try {
+    await rankModel.updatePosition(rankId, data)
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 export const adminService = {
   getAllUserService,
   changeUserRoleService,
@@ -135,5 +175,9 @@ export const adminService = {
   updateMembershipService,
   getMembershipsService,
   getTotalPaymentService,
-  getRevenueService
+  getRevenueService,
+  getRankPaginationService,
+  getUserInfoByRankIdService,
+  deleteMembershipService,
+  updateRankPositionService
 }
