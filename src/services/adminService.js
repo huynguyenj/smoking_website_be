@@ -164,6 +164,33 @@ const updateRankPositionService = async (rankId, data) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
 }
+
+const getUserDetailService = async (userId) => {
+  try {
+    const result = await userModel.findOneUserById(userId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const deleteUserService = async (userId) => {
+  try {
+    await userModel.deleteUser(userId)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const setActiveUserService = async (userId, active) => {
+  try {
+    await userModel.setActiveUser(userId, active)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 export const adminService = {
   getAllUserService,
   changeUserRoleService,
@@ -179,5 +206,8 @@ export const adminService = {
   getRankPaginationService,
   getUserInfoByRankIdService,
   deleteMembershipService,
-  updateRankPositionService
+  updateRankPositionService,
+  getUserDetailService,
+  deleteUserService,
+  setActiveUserService
 }

@@ -116,11 +116,24 @@ const searchUserValidation = async (req, res, next) => {
   }
 }
 
+const setActiveValidate = async (req, res, next) => {
+  try {
+    const correctCondition = Joi.object({
+      isActive: Joi.boolean().strict().required()
+    })
+    await correctCondition.validateAsync(req.body)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
+  }
+}
+
 export const userValidation = {
   registerValidation,
   loginValidation,
   updateValidation,
   updateRoleValidation,
   totalUserInMonthValidation,
-  searchUserValidation
+  searchUserValidation,
+  setActiveValidate
 }

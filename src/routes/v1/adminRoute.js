@@ -3,6 +3,7 @@ import { checkRoleMiddleware } from '@/middlewares/checkRoleMiddlewares'
 import { verifyToken } from '@/middlewares/verifyTokenMiddlewares'
 import { membershipValidation } from '@/validations/membershipValidation'
 import { paginationValidate } from '@/validations/paginationValidation'
+import { rankValidation } from '@/validations/rankValidation'
 import { userValidation } from '@/validations/userValidation'
 import express from 'express'
 
@@ -15,6 +16,10 @@ Router.route('/user')
   .post(userValidation.totalUserInMonthValidation, adminController.getTotalUserInMonthController)
 Router.route('/user/role/:user_id')
   .put(userValidation.updateRoleValidation, adminController.changeUserRoleController)
+Router.route('/user/detail/:userId')
+  .delete(adminController.deleteUserController)
+  .get(adminController.getUserDetailController)
+  .put(userValidation.setActiveValidate, adminController.setActiveController)
 Router.route('/user/pagination')
   .post(paginationValidate.paginationValidation, adminController.getUserPaginationController)
 
@@ -38,5 +43,5 @@ Router.route('/rank')
   .post(paginationValidate.paginationValidation, adminController.getRankPaginationController)
 Router.route('/rank/:rankId')
   .get(adminController.getUserInfoByRankIdController)
-  .put(adminController.updateRankPositionController)
+  .put(rankValidation.updatePositionValidate, adminController.updateRankPositionController)
 export const adminRoute = Router
