@@ -48,7 +48,8 @@ const getFeedbackPaginationController = async (req, res, next) => {
   try {
     const { limit, page, sort } = req.body
     const result = await adminService.getFeedbackPaginationService(limit, page, sort)
-    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get feedback successfully!', result))
+    const finalData = jsonForm.paginationReturn(result.result, limit, page, result.totalFeedback)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get feedback successfully!', finalData))
   } catch (error) {
     next(error)
   }
@@ -154,6 +155,37 @@ const updateRankPositionController = async (req, res, next) => {
     next(error)
   }
 }
+
+const getUserDetailController = async (req, res, next) => {
+  try {
+    const { userId } = req.params
+    const result = await adminService.getUserDetailService(userId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get detail successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteUserController = async (req, res, next) => {
+  try {
+    const { userId } = req.params
+    await adminService.deleteUserService(userId)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Delete user successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const setActiveController = async (req, res, next) => {
+  try {
+    const { userId } = req.params
+    const data = req.body
+    await adminService.setActiveUserService(userId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Set active user successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
 export const adminController = {
   getAllUserController,
   changeUserRoleController,
@@ -169,5 +201,8 @@ export const adminController = {
   getRankPaginationController,
   getUserInfoByRankIdController,
   deleteMembershipController,
-  updateRankPositionController
+  updateRankPositionController,
+  getUserDetailController,
+  deleteUserController,
+  setActiveController
 }

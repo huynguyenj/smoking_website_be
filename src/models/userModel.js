@@ -96,6 +96,38 @@ const updateProfile = async (userId, profileData) => {
   }
 }
 
+const deleteUser = async (userId) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set: { isDeleted: true }
+    }
+    )
+    return
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const setActiveUser = async (userId, active) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set: active
+    }
+    )
+    return
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const getTotalUser = async () => {
   try {
     const totalUser = await GET_DB().collection(USER_COLLECTION_NAME).countDocuments()
@@ -164,13 +196,18 @@ const searchUser = async (query) => {
 const getFeedback = async (limit, page, sort) => {
   try {
     const skip = (page-1)*limit
-    const result = GET_DB().collection(USER_COLLECTION_NAME).find({ feedback: { $ne: null } }).project({
+    const result =await GET_DB().collection(USER_COLLECTION_NAME).find({ feedback: { $ne: null } }).project({
       user_name: 1,
       _id: 1,
       feedback: 1,
       profile: 1
     }).sort({ 'feedback.create_feedback_date': sort }).limit(limit).skip(skip).toArray()
-    return result
+    const totalFeedback =await GET_DB().collection(USER_COLLECTION_NAME).countDocuments({ feedback: { $ne: null } })
+    const dataReturn = {
+      result,
+      totalFeedback
+    }
+    return dataReturn
   } catch (error) {
     throw new Error(error)
   }
@@ -229,5 +266,7 @@ export const userModel = {
   searchUser,
   getFeedback,
   deleteFeedback,
-  updateMembership
+  updateMembership,
+  deleteUser,
+  setActiveUser
 }
