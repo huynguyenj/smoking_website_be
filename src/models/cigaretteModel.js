@@ -205,7 +205,7 @@ const updateCigarette = async (user_id, cigaretteId, data) => {
 
 const deleteCigarette = async (user_id, cigaretteId) => {
   try {
-    await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOneAndUpdate({
+    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).findOneAndUpdate({
       _id: new ObjectId(cigaretteId),
       isDeleted: false,
       user_id: new ObjectId(user_id)
@@ -214,6 +214,7 @@ const deleteCigarette = async (user_id, cigaretteId) => {
       $set: { isDeleted: true }
     }
     )
+    return result
   } catch (error) {
     throw new Error(error.message)
   }
