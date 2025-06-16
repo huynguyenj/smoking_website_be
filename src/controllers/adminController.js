@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes'
 const getAllUserController = async (req, res, next) => {
   try {
     const totalUser = await adminService.getAllUserService()
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get total successfully', totalUser))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get total successfully', totalUser))
   } catch (error) {
     next(error)
   }
@@ -28,7 +28,7 @@ const getUserPaginationController = async (req, res, next) => {
     const { page, limit, sort } = req.body
     const totalUser = await adminService.getUserPaginationService(page, limit, sort)
     const result = jsonForm.paginationReturn(totalUser.users, limit, page, totalUser.totalPages)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', result))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', result))
   } catch (error) {
     next(error)
   }
@@ -38,7 +38,7 @@ const getTotalUserInMonthController = async (req, res, next) => {
   try {
     const { month, year } = req.body
     const totalUser = await adminService.getTotalUserInMonthService(month, year)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, `Get total users in month ${month} successfully!`, totalUser))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, `Get total users in month ${month} successfully!`, totalUser))
   } catch (error) {
     next(error)
   }
@@ -59,7 +59,7 @@ const deleteFeedbackController = async (req, res, next) => {
   try {
     const { userId } = req.params
     await adminService.deleteFeedbackService(userId)
-    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Delete feedback successfully!'))
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Delete feedback successfully!'))
   } catch (error) {
     next(error)
   }
@@ -81,7 +81,7 @@ const updateMembershipController = async (req, res, next) => {
     const { membershipId } = req.params
     const data = req.body
     await adminService.updateMembershipService(membershipId, data)
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Update membership successfully!'))
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update membership successfully!'))
   } catch (error) {
     next(error)
   }
@@ -91,7 +91,7 @@ const deleteMembershipController = async (req, res, next) => {
   try {
     const { membershipId } = req.params
     await adminService.deleteMembershipService(membershipId)
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Delete membership successfully!'))
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Delete membership successfully!'))
   } catch (error) {
     next(error)
   }
@@ -100,7 +100,17 @@ const deleteMembershipController = async (req, res, next) => {
 const getMembershipsController = async (req, res, next) => {
   try {
     const result = await adminService.getMembershipsService()
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get memberships successfully!', result))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get memberships successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getMembershipsByIdController = async (req, res, next) => {
+  try {
+    const { membershipId } = req.params
+    const result = await adminService.getMembershipsByIdService(membershipId)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get membership successfully!', result))
   } catch (error) {
     next(error)
   }
@@ -109,7 +119,7 @@ const getMembershipsController = async (req, res, next) => {
 const getTotalPaymentController = async (req, res, next) => {
   try {
     const result = await adminService.getTotalPaymentService()
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get total payment successfully!', result))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get total payment successfully!', result))
   } catch (error) {
     next(error)
   }
@@ -118,7 +128,7 @@ const getTotalPaymentController = async (req, res, next) => {
 const getRevenueController = async (req, res, next) => {
   try {
     const result = await adminService.getRevenueService()
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get revenue successfully!', result))
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get revenue successfully!', result))
   } catch (error) {
     next(error)
   }
@@ -196,6 +206,7 @@ export const adminController = {
   createMembershipController,
   updateMembershipController,
   getMembershipsController,
+  getMembershipsByIdController,
   getTotalPaymentController,
   getRevenueController,
   getRankPaginationController,
