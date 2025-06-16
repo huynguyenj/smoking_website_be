@@ -116,6 +116,14 @@ const getMembershipsService = async () => {
   }
 }
 
+const getMembershipsByIdService = async (membershipId) => {
+  try {
+    const result = await membershipModel.findMembershipById(membershipId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 const getTotalPaymentService = async () => {
   try {
     const totalPayment = await paymentModel.totalPayment()
@@ -201,6 +209,7 @@ export const adminService = {
   createMembershipService,
   updateMembershipService,
   getMembershipsService,
+  getMembershipsByIdService,
   getTotalPaymentService,
   getRevenueService,
   getRankPaginationService,

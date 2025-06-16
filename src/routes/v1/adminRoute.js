@@ -34,7 +34,7 @@ Router.route('/membership')
 Router.route('/membership/edit/:membershipId')
   .put(membershipValidation.updateMembershipValidate, adminController.updateMembershipController)
   .delete(adminController.deleteMembershipController)
-
+  .get(adminController.getMembershipsByIdController)
 Router.route('/payment')
   .get(adminController.getTotalPaymentController)
 Router.route('/revenue')
