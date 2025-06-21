@@ -45,7 +45,7 @@ const updateRankByRankId = async (rankId, data) => {
     },
     {
       $set: { star_count: star_count },
-      $push: { achievements: { $each: achievements } }
+      $addToSet: { achievements: { $each: achievements } }
     })
     return
   } catch (error) {
@@ -55,27 +55,9 @@ const updateRankByRankId = async (rankId, data) => {
 
 const getRankByUserId = async (userId) => {
   try {
-    const result = await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
-      {
-        $match: {
-          _id: new ObjectId(userId),
-          isDeleted: false
-        }
-      },
-      {
-        $lookup: {
-          from: RANK_COLLECTION_NAME,
-          localField: 'rank',
-          foreignField:'_id',
-          as: 'rankData'
-        }
-      },
-      {
-        $project:
-        { rankData: 1, _id: 0 }
-      }
-    ]).next()
-    return result
+    const user = await GET_DB().collection(userModel.USER_COLLECTION_NAME).findOne({ _id: new ObjectId(userId) })
+    const rankInfo = await GET_DB().collection(RANK_COLLECTION_NAME).findOne({ _id: new ObjectId(user.rank) })
+    return rankInfo
   } catch (error) {
     throw new Error(error)
   }
