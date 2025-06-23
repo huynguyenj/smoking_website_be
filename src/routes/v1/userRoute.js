@@ -106,7 +106,7 @@ Router.route('/membership')
 
 //Payment
 Router.route('/payment')
-  .get(userController.paymentController)
+  .post(userController.paymentController)
 
 //Achievement route
 Router.route('/achievement')
