@@ -114,7 +114,8 @@ Router.route('/achievement')
 
 //Rank
 Router.route('/rank')
-  .get(achievementController.getRankController)
+  .get(achievementController.getUserRankInformationController)
+  .post(paginationValidate.paginationValidation, achievementController.getTopRankForUserController)
 
 //Chat AI
 Router.route('/get-advice/:cigaretteId')

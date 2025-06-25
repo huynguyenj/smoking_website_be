@@ -15,6 +15,18 @@ const updatePositionValidate = async (req, res, next) => {
   }
 }
 
+const arrangePositionValidate = async (req, res, next) => {
+  try {
+    const correctCondition = Joi.object({
+      option_sort: Joi.string().valid('star_count', 'total_achievements').trim().strict().required()
+    })
+    await correctCondition.validateAsync(req.body)
+    next()
+  } catch (error) {
+    throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid field!', errorJsonForm(error.details))
+  }
+}
 export const rankValidation = {
-  updatePositionValidate
+  updatePositionValidate,
+  arrangePositionValidate
 }

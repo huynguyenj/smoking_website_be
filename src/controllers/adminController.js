@@ -1,5 +1,4 @@
 import { adminService } from '@/services/adminService'
-import ApiError from '@/utils/ApiError'
 import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
@@ -134,38 +133,6 @@ const getRevenueController = async (req, res, next) => {
   }
 }
 
-const getRankPaginationController = async (req, res, next) => {
-  try {
-    const { page, limit, sort } = req.body
-    const dataReturn = await adminService.getRankPaginationService(page, limit, sort)
-    const finalResult = jsonForm.paginationReturn(dataReturn.result, limit, page, dataReturn.totalPage)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get ranks successfully!', finalResult))
-  } catch (error) {
-    next(error)
-  }
-}
-
-const getUserInfoByRankIdController = async (req, res, next) => {
-  try {
-    const { rankId } = req.params
-    const result = await adminService.getUserInfoByRankIdService(rankId)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get userInfo successfully!', result))
-  } catch (error) {
-    next(error)
-  }
-}
-
-const updateRankPositionController = async (req, res, next) => {
-  try {
-    const { rankId } = req.params
-    const data = req.body
-    await adminService.updateRankPositionService(rankId, data)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update successfully!'))
-  } catch (error) {
-    next(error)
-  }
-}
-
 const getUserDetailController = async (req, res, next) => {
   try {
     const { userId } = req.params
@@ -209,10 +176,7 @@ export const adminController = {
   getMembershipsByIdController,
   getTotalPaymentController,
   getRevenueController,
-  getRankPaginationController,
-  getUserInfoByRankIdController,
   deleteMembershipController,
-  updateRankPositionController,
   getUserDetailController,
   deleteUserController,
   setActiveController

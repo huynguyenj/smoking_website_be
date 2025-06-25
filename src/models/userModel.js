@@ -3,6 +3,7 @@ import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { membershipModel } from './membershipModel'
+import { rankModel } from './rankModel'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_SCHEMA = Joi.object({
@@ -69,8 +70,22 @@ const findOneUserById = async (id) => {
 }
 
 const findUserByEmail = async (email) => {
-  const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ email: email })
+  const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ email: email, isDeleted: false })
   return user
+}
+
+const findAllEmail = async () => {
+  try {
+    const result = await GET_DB().collection(USER_COLLECTION_NAME).find({
+      $and: [
+        { email: { $ne: null } },
+        { isDeleted: { $ne: true } }
+      ]
+    }).project({ email: 1 }).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 const updateUserById = async (id, updateData) => {
@@ -98,6 +113,7 @@ const updateProfile = async (userId, profileData) => {
 
 const deleteUser = async (userId) => {
   try {
+    const user = await findOneUserById(userId)
     await GET_DB().collection(USER_COLLECTION_NAME).updateOne({
       _id: new ObjectId(userId),
       isDeleted: false
@@ -106,6 +122,7 @@ const deleteUser = async (userId) => {
       $set: { isDeleted: true }
     }
     )
+    await rankModel.deleteRank(user.rank)
     return
   } catch (error) {
     throw new Error(error)
@@ -268,5 +285,6 @@ export const userModel = {
   deleteFeedback,
   updateMembership,
   deleteUser,
-  setActiveUser
+  setActiveUser,
+  findAllEmail
 }

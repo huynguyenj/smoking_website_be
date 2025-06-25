@@ -20,7 +20,8 @@ const smokingAndMoneyAchievementService = async (userId) => {
       const achievement = [`Save ${totalSaving}`, `No smoking in ${totalDayOutSmoke} days`]
       const data = {
         star_count: result.listResult.length,
-        achievements: achievement
+        achievements: achievement,
+        totalAchievements: achievement.length
       }
       await rankModel.createRank(userId, data)
       return {
@@ -35,7 +36,7 @@ const smokingAndMoneyAchievementService = async (userId) => {
   }
 }
 
-const getRankService = async (userId) => {
+const getUserRankInformationService = async (userId) => {
   try {
     const result = await rankModel.getRankByUserId(userId)
     return result
@@ -44,7 +45,81 @@ const getRankService = async (userId) => {
   }
 }
 
+
+const getRankPaginationService = async (page, limit, sort, sortName) => {
+  try {
+    const result = await rankModel.getRankPagination(page, limit, sort, sortName)
+    const totalData = await rankModel.getTotalRank()
+    const totalPage = Math.ceil(totalData / limit)
+    return {
+      result,
+      totalPage
+    }
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const getRankForUserPaginationService = async (page, limit, sort) => {
+  try {
+    const result = await rankModel.getRankUserPagination(page, limit, sort)
+    const totalData = await rankModel.getTotalRank()
+    const totalPage = Math.ceil(totalData / limit)
+    return {
+      result,
+      totalPage
+    }
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const getUserInfoByRankIdService = async (rankId) => {
+  try {
+    const result = await rankModel.findUserByRankId(rankId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const getTopRankForUserService = async () => {
+  try {
+    const result = await rankModel.getTopRank()
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const updateRankPositionService = async (sortName) => {
+  try {
+    const result = await rankModel.getTopRank(sortName)
+    await result.forEach(async ({ _id }, index) => {
+      const newPosition = index + 1
+      await rankModel.updatePosition(_id, { position: newPosition })
+    })
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
+const updateRankPositionSpecificService = async (rankId, data) => {
+  try {
+    await rankModel.updatePosition(rankId, data)
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
 export const achievementService = {
   smokingAndMoneyAchievementService,
-  getRankService
+  getUserRankInformationService,
+  getRankPaginationService,
+  getUserInfoByRankIdService,
+  updateRankPositionService,
+  getTopRankForUserService,
+  getRankForUserPaginationService,
+  updateRankPositionSpecificService
 }

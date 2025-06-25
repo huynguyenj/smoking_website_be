@@ -1,4 +1,4 @@
-import { chatGPT } from '@/providers/chatGPT'
+import { chatGPT } from '@/providers/openAI'
 import { VN_PAY } from '@/providers/vnpay'
 import { userService } from '@/services/userService'
 import ApiError from '@/utils/ApiError'

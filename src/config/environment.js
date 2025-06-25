@@ -21,5 +21,7 @@ export const env = {
   VNP_RETURN_URL_LOCAL:process.env.VNP_RETURN_URL_LOCAL,
   VNP_RETURN_URL_PROD: process.env.VNP_RETURN_URL_PROD,
   OPEN_AI_KEY: process.env.OPEN_AI_KEY,
-  SERVER_URL_PROD: process.env.SERVER_URL_PROD
+  SERVER_URL_PROD: process.env.SERVER_URL_PROD,
+  EMAIL_API_KEY: process.env.EMAIL_API_KEY,
+  EMAIL_BREVO_API_KEY: process.env.EMAIL_BREVO
 }
