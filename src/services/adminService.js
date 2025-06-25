@@ -1,6 +1,5 @@
 import { membershipModel } from '@/models/membershipModel'
 import { paymentModel } from '@/models/paymentModel'
-import { rankModel } from '@/models/rankModel'
 import { userModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
@@ -142,37 +141,6 @@ const getRevenueService = async () => {
   }
 }
 
-const getRankPaginationService = async (page, limit, sort) => {
-  try {
-    const result = await rankModel.getRankPagination(page, limit, sort)
-    const totalData = await rankModel.getTotalRank()
-    const totalPage = Math.ceil(totalData / limit)
-    return {
-      result,
-      totalPage
-    }
-  } catch (error) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
-  }
-}
-
-const getUserInfoByRankIdService = async (rankId) => {
-  try {
-    const result = await rankModel.findUserByRankId(rankId)
-    return result
-  } catch (error) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
-  }
-}
-
-const updateRankPositionService = async (rankId, data) => {
-  try {
-    await rankModel.updatePosition(rankId, data)
-  } catch (error) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
-  }
-}
-
 const getUserDetailService = async (userId) => {
   try {
     const result = await userModel.findOneUserById(userId)
@@ -212,10 +180,7 @@ export const adminService = {
   getMembershipsByIdService,
   getTotalPaymentService,
   getRevenueService,
-  getRankPaginationService,
-  getUserInfoByRankIdService,
   deleteMembershipService,
-  updateRankPositionService,
   getUserDetailService,
   deleteUserService,
   setActiveUserService

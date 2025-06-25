@@ -8,7 +8,23 @@ const paginationValidation = async (req, res, next) => {
     const paginationSchema = Joi.object({
       page: Joi.number().integer().min(1).default(1).required(),
       limit: Joi.number().integer().default(5).required(),
-      sort: Joi.number().default(-1)
+      sort: Joi.number().default(-1),
+      sortName: Joi.string().default('')
+    })
+    await paginationSchema.validateAsync(req.body, { abortEarly: false })
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'Invalid pagination data - Please check again!', errorJsonForm(error.details)))
+  }
+}
+
+const rankPaginationValidation = async (req, res, next) => {
+  try {
+    const paginationSchema = Joi.object({
+      page: Joi.number().integer().min(1).default(1).required(),
+      limit: Joi.number().integer().default(5).required(),
+      sort: Joi.number().default(-1),
+      sortName: Joi.string().strict().trim().valid('star_count', 'position', 'total_achievements')
     })
     await paginationSchema.validateAsync(req.body, { abortEarly: false })
     next()
@@ -18,5 +34,6 @@ const paginationValidation = async (req, res, next) => {
 }
 
 export const paginationValidate = {
-  paginationValidation
+  paginationValidation,
+  rankPaginationValidation
 }

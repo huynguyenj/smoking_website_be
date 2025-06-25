@@ -12,6 +12,7 @@ import { corsOptions } from './config/cors'
 import { createServer } from 'http'
 import { connectSocket } from './providers/socketio'
 import { messageService } from './services/messageService'
+import { notificationEmail } from './config/cronjobs'
 const START_SERVER =async () => {
   const hostname = 'localhost'
   const PORT = env.APP_PORT || process.env.PORT
@@ -31,6 +32,7 @@ const START_SERVER =async () => {
   app.use(express.json())
   app.use(cookieParser())
   app.use(cors(corsOptions))
+  notificationEmail.start()
   app.use('/v1', APIs_V1)
   app.use(errorHandlingMiddlewares)
   httpServer.listen(PORT, async () => {

@@ -29,3 +29,9 @@ export const REQUIRED_FOR_STAR = {
   minMoney: 100000,
   minDayNoSmoke: 2
 }
+
+export const TIME_RUN_CRON_JOB = {
+  time: '0 8 * * *' // 2 minutes
+}
+
+export const TOP_RANK = 30
