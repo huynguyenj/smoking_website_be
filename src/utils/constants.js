@@ -4,7 +4,8 @@ export const WHITELIST_DOMAIN = [
   env.CLIENT_URL,
   env.CLIENT_URL_PROD,
   env.CLIENT_URL_PROD2,
-  env.VNP_RETURN_URL_PROD
+  env.VNP_RETURN_URL_PROD,
+  env.VNP_RETURN_URL_PRODUCTION
 ]
 
 export const TOKEN_TIME = {
