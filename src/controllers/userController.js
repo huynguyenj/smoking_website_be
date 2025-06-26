@@ -6,6 +6,7 @@ import { COOKIES_OPTIONS } from '@/utils/constants'
 import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 import { cigaretteService } from '@/services/cigarettesService'
+import { memberShipService } from '@/services/membershipService'
 
 const registerController = async (req, res, next) => {
   try {
@@ -138,8 +139,18 @@ const returnPaymentCheckController = async (req, res, next) => {
 
 const getMembershipsController = async (req, res, next) => {
   try {
-    const result = await userService.getMembershipsService()
-    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get memberships successfully!', result))
+    const result = await memberShipService.getMembershipsService()
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get memberships successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getUserMembershipController = async (req, res, next) => {
+  try {
+    const { membershipId } = req.params
+    const result = await memberShipService.getMembershipById(membershipId)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get membership info successfully!', result))
   } catch (error) {
     next(error)
   }
@@ -172,5 +183,6 @@ export const userController = {
   returnPaymentCheckController,
   getMembershipsController,
   updateProfileController,
-  chatAIController
+  chatAIController,
+  getUserMembershipController
 }

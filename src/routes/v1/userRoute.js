@@ -103,6 +103,8 @@ Router.route('/feedback')
 //Membership
 Router.route('/membership')
   .get(userController.getMembershipsController)
+Router.route('/membership/detail/:membershipId')
+  .get(userController.getUserMembershipController)
 
 //Payment
 Router.route('/payment')

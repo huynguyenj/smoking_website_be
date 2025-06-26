@@ -7,6 +7,7 @@ const smokingAndMoneyAchievementService = async (userId) => {
   try {
     //Get cigarette that have no-smoking-field and saving-money not null
     const result = await cigaretteModel.countMoneyAndNoSmoking(userId)
+    if (result.listResult.length === 0) throw new Error('You do not have any date off smoke or money saving to evaluate!')
     let totalSaving = 0
     let totalDayOutSmoke = 0
     //Calculate saving and total date that not smoke.
@@ -15,7 +16,6 @@ const smokingAndMoneyAchievementService = async (userId) => {
       totalDayOutSmoke++
     })
     //Condition to have achievement
-    if (result.listResult.length === 0) throw new Error('You do not have any date off smoke or money saving to evaluate!')
     if (totalSaving >= REQUIRED_FOR_STAR.minMoney || totalDayOutSmoke >= REQUIRED_FOR_STAR.minDayNoSmoke ) {
       const achievement = [`Save ${totalSaving}`, `No smoking in ${totalDayOutSmoke} days`]
       const data = {
