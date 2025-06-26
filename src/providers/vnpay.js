@@ -19,7 +19,7 @@ const createPaymentUrl = (data, ipAddress, userId) => {
   const secretKey = env.VNP_SECRET_KEY
   const orderId = uuid4()
   const vnpUrl = env.VNPAY_URL
-  const returnUrl = env.BUILD_MODE === 'production' ? env.VNP_RETURN_URL_PROD : env.VNP_RETURN_URL_LOCAL
+  const returnUrl = env.BUILD_MODE === 'production' ? env.VNP_RETURN_URL_PRODUCTION : env.VNP_RETURN_URL_LOCAL
   const createDate = date.toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) // yyyymmddHHMMSS
 
   let vnp_Params = {
