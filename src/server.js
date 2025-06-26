@@ -21,7 +21,6 @@ const START_SERVER =async () => {
   const io = await connectSocket(httpServer)
   const chatSocket = io.of('/chat')
   chatSocket.on('connection', (socket) => {
-    console.log(socket.id)
     const roomId = socket.handshake.query.roomId
     socket.join(roomId)
     socket.on('send-message', async ( { sender_id, receiverId, text } ) => {

@@ -1,5 +1,4 @@
 import { env } from '@/config/environment'
-import { membershipModel } from '@/models/membershipModel'
 import { paymentModel } from '@/models/paymentModel'
 import { userModel } from '@/models/userModel'
 import { supabaseMethod } from '@/providers/supabase'
@@ -180,16 +179,6 @@ const paymentService = async (data) => {
 
 }
 
-const getMembershipsService = async () => {
-  try {
-    const result = await membershipModel.getMemberships()
-    if (!result || result.length === 0) throw new Error('There are no membership has been created!')
-    return result
-  } catch (error) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
-  }
-}
-
 export const userService = {
   registerService,
   loginService,
@@ -200,6 +189,5 @@ export const userService = {
   searchUserService,
   feedbackService,
   paymentService,
-  getMembershipsService,
   updateProfileService
 }
