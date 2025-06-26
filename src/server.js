@@ -30,8 +30,8 @@ const START_SERVER =async () => {
   })
   app.use(express.json())
   app.use(cookieParser())
-  app.use(cors(corsOptions))
   notificationEmail.start()
+  app.use(cors(corsOptions))
   app.use('/v1', APIs_V1)
   app.use(errorHandlingMiddlewares)
   httpServer.listen(PORT, async () => {
