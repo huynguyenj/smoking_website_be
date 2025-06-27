@@ -22,9 +22,9 @@ const USER_SCHEMA = Joi.object({
     address: Joi.string().strict().default(null),
     experience: Joi.string().strict().default(null),
     birthdate: Joi.date().timestamp('javascript').default(null),
-    age: Joi.number().strict().default(null),
-    image_url: Joi.string().trim().strict().default(null)
+    age: Joi.number().strict().default(null)
   }),
+  image_url: Joi.string().trim().strict().default(null),
   friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)).default([]),
   feedback: Joi.object({
     content: Joi.string().trim().allow(''),

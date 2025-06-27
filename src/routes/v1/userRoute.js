@@ -46,9 +46,10 @@ Router.route('/info')
 Router.route('/logout')
   .post(userController.logoutController)
 Router.route('/profile')
-  .put(upload.single('profile_image'), userController.updateProfileController)
+  .put(userController.updateProfileController)
   .post(userController.changePasswordController)
-
+Router.route('/profile/avatar')
+  .put(upload.single('profile_image'), userController.updateAvatarController)
 //Plan route
 Router.route('/plan')
   .post(planValidation.createPlanValidation, planController.createPlanController)
