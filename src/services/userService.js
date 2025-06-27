@@ -72,7 +72,6 @@ const getUserInfoService = async (id) => {
     const userInfo = await userModel.findOneUserById(id)
     return {
       ...userInfo,
-      password: undefined,
       refreshToken: undefined
     }
   } catch (error) {
@@ -86,6 +85,19 @@ const updateUserInfoService = async (id, data) => {
     const isEmailExisted = await userModel.findUserByEmail(data['email'])
     if (isEmailExisted) throw new Error('This is email already exist please try another one!')
     await userModel.updateUserById(id, data)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+  }
+}
+
+const changePasswordService = async (userId, currentPassword, newPassword) => {
+  try {
+    const user = await userModel.findOneUserById(userId)
+    if (!user) throw new Error('This user is not existed!')
+    if (!await passwordHelper.comparePassword(currentPassword, user.password)) throw new Error('Your password is incorrect!')
+    const newHashPassword = await passwordHelper.hashPassword(newPassword)
+    await userModel.updateNewPassword(userId, newHashPassword)
     return
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -184,6 +196,7 @@ export const userService = {
   loginService,
   getUserInfoService,
   updateUserInfoService,
+  changePasswordService,
   getNewAccessTokenService,
   logoutService,
   searchUserService,

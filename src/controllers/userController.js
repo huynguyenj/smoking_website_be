@@ -77,6 +77,17 @@ const updateProfileController = async (req, res, next) => {
   }
 }
 
+const changePasswordController = async (req, res, next) => {
+  try {
+    const { current_password, new_password } = req.body
+    const userId = req.user.id
+    await userService.changePasswordService(userId, current_password, new_password)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update password successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getNewAccessTokenController = async (req, res, next) => {
   try {
 
@@ -176,6 +187,7 @@ export const userController = {
   getUserInfoController,
   logoutController,
   updateUserInfoController,
+  changePasswordController,
   getNewAccessTokenController,
   searchUserController,
   feedbackController,
