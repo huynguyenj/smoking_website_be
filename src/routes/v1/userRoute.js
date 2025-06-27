@@ -47,6 +47,7 @@ Router.route('/logout')
   .post(userController.logoutController)
 Router.route('/profile')
   .put(upload.single('profile_image'), userController.updateProfileController)
+  .post(userController.changePasswordController)
 
 //Plan route
 Router.route('/plan')

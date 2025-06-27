@@ -111,6 +111,22 @@ const updateProfile = async (userId, profileData) => {
   }
 }
 
+const updateNewPassword = async (userId, newPassword) => {
+  try {
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({
+      _id: new ObjectId(userId),
+      isDeleted: false
+    },
+    {
+      $set: { password: newPassword }
+    }
+    )
+    return
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const deleteUser = async (userId) => {
   try {
     const user = await findOneUserById(userId)
@@ -277,6 +293,7 @@ export const userModel = {
   findUserByEmail,
   updateUserById,
   updateProfile,
+  updateNewPassword,
   getTotalUser,
   getUserPagination,
   getTotalUserInMonth,
