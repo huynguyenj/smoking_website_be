@@ -67,10 +67,20 @@ const updateUserInfoController = async (req, res, next) => {
 
 const updateProfileController = async (req, res, next) => {
   try {
-    const file = req.file
     const data = req.body
     const userId = req.user.id
-    await userService.updateProfileService(userId, data, file)
+    await userService.updateProfileService(userId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update successfully!'))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateAvatarController = async (req, res, next) => {
+  try {
+    const file = req.file
+    const userId = req.user.id
+    await userService.updateAvatarService(userId, file)
     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update successfully!'))
   } catch (error) {
     next(error)
@@ -187,6 +197,7 @@ export const userController = {
   getUserInfoController,
   logoutController,
   updateUserInfoController,
+  updateAvatarController,
   changePasswordController,
   getNewAccessTokenController,
   searchUserController,

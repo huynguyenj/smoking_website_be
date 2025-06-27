@@ -104,19 +104,22 @@ const changePasswordService = async (userId, currentPassword, newPassword) => {
   }
 }
 
-const updateProfileService = async (userId, data, file) => {
+const updateProfileService = async (userId, data) => {
   try {
-    let finalData = {
-      ...data
+    await userModel.updateProfile(userId, data)
+    return
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+  }
+}
+
+const updateAvatarService = async (userId, file) => {
+  try {
+    const imageURLReturn = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.user, userId)
+    const finalData = {
+      image_url: imageURLReturn
     }
-    if (file) {
-      const imageURLReturn = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.user, userId)
-      finalData = {
-        ...data,
-        image_url: imageURLReturn
-      }
-    }
-    await userModel.updateProfile(userId, finalData)
+    await userModel.updateUserById(userId, finalData)
     return
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
@@ -201,6 +204,7 @@ export const userService = {
   loginService,
   getUserInfoService,
   updateUserInfoService,
+  updateAvatarService,
   changePasswordService,
   getNewAccessTokenService,
   logoutService,
