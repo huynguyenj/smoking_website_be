@@ -106,10 +106,15 @@ const changePasswordService = async (userId, currentPassword, newPassword) => {
 
 const updateProfileService = async (userId, data, file) => {
   try {
-    const imageURLList = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.user, userId)
-    const finalData = {
-      ...data,
-      image_url: imageURLList
+    let finalData = {
+      ...data
+    }
+    if (file) {
+      const imageURLReturn = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.user, userId)
+      finalData = {
+        ...data,
+        image_url: imageURLReturn
+      }
     }
     await userModel.updateProfile(userId, finalData)
     return
