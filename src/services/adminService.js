@@ -45,6 +45,23 @@ const getTotalUserInMonthService = async (month, year) => {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
   }
 }
+const getRevenueByYearService = async (year) => {
+  try {
+    const startDate = new Date(year, 0, 1).getTime()
+    const endDate = new Date(year + 1, 0, 1).getTime()
+    const result = await paymentModel.getRevenueByYear(startDate, endDate)
+    const chartData = new Map()
+    for (let i = 0; i < result.length; i++) {
+      const month = new Date(result[i].pay_date).getMonth() + 1
+      chartData.set(month, (chartData.get(month)|| 0) + result[i].amount)
+    }
+    const data = Array.from(chartData).map(([key, value]) => { return { month: key, revenue: value }})
+    return data
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+  }
+
+}
 
 const getFeedbackPaginationService = async (limit, page, sort) => {
   try {
@@ -180,6 +197,7 @@ export const adminService = {
   getMembershipsByIdService,
   getTotalPaymentService,
   getRevenueService,
+  getRevenueByYearService,
   deleteMembershipService,
   getUserDetailService,
   deleteUserService,

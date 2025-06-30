@@ -133,6 +133,16 @@ const getRevenueController = async (req, res, next) => {
   }
 }
 
+const getRevenueByYearController = async (req, res, next) => {
+  try {
+    const { year } = req.body
+    const result = await adminService.getRevenueByYearService(year)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get revenue successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getUserDetailController = async (req, res, next) => {
   try {
     const { userId } = req.params
@@ -168,6 +178,7 @@ export const adminController = {
   changeUserRoleController,
   getUserPaginationController,
   getTotalUserInMonthController,
+  getRevenueByYearController,
   getFeedbackPaginationController,
   deleteFeedbackController,
   createMembershipController,
