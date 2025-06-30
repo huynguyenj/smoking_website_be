@@ -50,8 +50,22 @@ const getRevenue = async () => {
   }
 }
 
+const getRevenueByYear = async (startDate, endDate) => {
+  try {
+    const result = await GET_DB().collection(PAYMENT_COLLECTION_NAME).find({
+      pay_date: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    }).sort({ pay_date: 1 }).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const paymentModel = {
   createPayment,
   totalPayment,
-  getRevenue
+  getRevenue,
+  getRevenueByYear
 }

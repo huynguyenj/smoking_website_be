@@ -44,6 +44,7 @@ Router.route('/payment')
   .get(adminController.getTotalPaymentController)
 Router.route('/revenue')
   .get(adminController.getRevenueController)
+  .post(adminController.getRevenueByYearController)
 
 //Rank
 Router.route('/rank')
