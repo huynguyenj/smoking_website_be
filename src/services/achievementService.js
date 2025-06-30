@@ -46,9 +46,9 @@ const getUserRankInformationService = async (userId) => {
 }
 
 
-const getRankPaginationService = async (page, limit, sort, sortName) => {
+const getRankAdminPaginationService = async (page, limit, sort, sortName) => {
   try {
-    const result = await rankModel.getRankPagination(page, limit, sort, sortName)
+    const result = await rankModel.getRankForAdminPagination(page, limit, sort, sortName)
     const totalData = await rankModel.getTotalRank()
     const totalPage = Math.ceil(totalData / limit)
     return {
@@ -116,7 +116,7 @@ const updateRankPositionSpecificService = async (rankId, data) => {
 export const achievementService = {
   smokingAndMoneyAchievementService,
   getUserRankInformationService,
-  getRankPaginationService,
+  getRankAdminPaginationService,
   getUserInfoByRankIdService,
   updateRankPositionService,
   getTopRankForUserService,

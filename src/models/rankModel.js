@@ -67,7 +67,7 @@ const getRankByUserId = async (userId) => {
   }
 }
 
-const getRankPagination = async (page, limit, sort, sortName) => {
+const getRankForAdminPagination = async (page, limit, sort, sortName) => {
   try {
     if (!sort) sort = -1
     if (!sortName) sortName = 'star_count'
@@ -75,7 +75,7 @@ const getRankPagination = async (page, limit, sort, sortName) => {
     const result = await GET_DB().collection(RANK_COLLECTION_NAME).aggregate([
       {
         $lookup: {
-          from: 'users',
+          from: userModel.USER_COLLECTION_NAME,
           let: { rankId: '$_id' },
           pipeline: [
             {
@@ -112,7 +112,8 @@ const getRankPagination = async (page, limit, sort, sortName) => {
           users: {
             _id: '$user._id',
             user_name: '$user.user_name',
-            email: '$user.email'
+            email: '$user.email',
+            image_url: '$user.image_url'
           }
         }
       }
@@ -166,7 +167,8 @@ const getRankUserPagination = async (page, limit, sort) => {
           users: {
             _id: '$user._id',
             user_name: '$user.user_name',
-            email: '$user.email'
+            email: '$user.email',
+            image_url: '$user.image_url'
           }
         }
       }
@@ -239,7 +241,7 @@ export const rankModel = {
   RANK_COLLECTION_NAME,
   createRank,
   getRankByUserId,
-  getRankPagination,
+  getRankForAdminPagination,
   getTotalRank,
   findUserByRankId,
   updatePosition,
