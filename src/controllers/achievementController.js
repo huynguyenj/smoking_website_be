@@ -24,10 +24,10 @@ const getUserRankInformationController = async (req, res, next) => {
   }
 }
 
-const getRankPaginationController = async (req, res, next) => {
+const getRankAdminPaginationController = async (req, res, next) => {
   try {
     const { page, limit, sort, sortName } = req.body
-    const dataReturn = await achievementService.getRankPaginationService(page, limit, sort, sortName)
+    const dataReturn = await achievementService.getRankAdminPaginationService(page, limit, sort, sortName)
     const finalResult = jsonForm.paginationReturn(dataReturn.result, limit, page, dataReturn.totalPage)
     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get ranks successfully!', finalResult))
   } catch (error) {
@@ -79,7 +79,7 @@ const updateRankPositionController = async (req, res, next) => {
 export const achievementController = {
   smokingAndMoneyAchievementController,
   getUserRankInformationController,
-  getRankPaginationController,
+  getRankAdminPaginationController,
   getUserInfoByRankIdController,
   getTopRankForUserController,
   updateRankPositionController,

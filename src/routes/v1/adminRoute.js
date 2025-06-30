@@ -48,7 +48,7 @@ Router.route('/revenue')
 
 //Rank
 Router.route('/rank')
-  .post(paginationValidate.rankPaginationValidation, achievementController.getRankPaginationController)
+  .post(paginationValidate.rankPaginationValidation, achievementController.getRankAdminPaginationController)
 Router.route('/rank/:rankId')
   .get(achievementController.getUserInfoByRankIdController)
   .put(rankValidation.updatePositionValidate, achievementController.updateRankPositionController)

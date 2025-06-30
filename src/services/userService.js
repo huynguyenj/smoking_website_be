@@ -72,7 +72,8 @@ const getUserInfoService = async (id) => {
     const userInfo = await userModel.findOneUserById(id)
     return {
       ...userInfo,
-      refreshToken: undefined
+      refreshToken: undefined,
+      password: undefined
     }
   } catch (error) {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
