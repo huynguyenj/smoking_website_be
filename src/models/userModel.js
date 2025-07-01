@@ -265,8 +265,11 @@ const updateMembership = async (userId, membershipName) => {
   try {
     const membership = await membershipModel.findMembershipByTitle(membershipName)
     let now = new Date()
-    if (membership.membership_title === 'Free') now = null
-    now.setMonth(now.getMonth() + 1)
+    if (membership.membership_title === 'Free') {
+      now = null
+    } else {
+      now.setMonth(now.getMonth() + 1)
+    }
     const expiredDate = now.getTime()
 
     const result = await GET_DB().collection(USER_COLLECTION_NAME).findOneAndUpdate({

@@ -18,7 +18,18 @@ const saveMessageService = async (senderId, receiverId, text) => {
     }
     const result = await messageModel.saveMessage(data)
     const message = await messageModel.findMessageById(result.insertedId)
-    return message
+    const finalData = {
+      message,
+      sender: {
+        image_url: senderIdUser.image_url,
+        user_name: senderIdUser.user_name
+      },
+      receiver: {
+        image_url: receiverIdUser.image_url,
+        user_name: receiverIdUser.user_name
+      }
+    }
+    return finalData
   } catch (error) {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }

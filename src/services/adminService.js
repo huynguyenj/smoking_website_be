@@ -97,7 +97,7 @@ const createMembershipService = async (adminId, data) => {
   }
 }
 
-const updateMembershipService = async (membershipId, data) => {
+const updateMembershipAdminService = async (membershipId, data) => {
   try {
     const membership = await membershipModel.findMembershipById(membershipId)
     if (!membership) throw new Error('This membership is not existed!')
@@ -106,7 +106,7 @@ const updateMembershipService = async (membershipId, data) => {
       ...data,
       update_date: Date.now()
     }
-    const result = await membershipModel.updateMembership(membershipId, finalData)
+    const result = await membershipModel.updateMembershipAdmin(membershipId, finalData)
     if (!result) throw new Error('Update fail!')
     return result
   } catch (error) {
@@ -192,7 +192,7 @@ export const adminService = {
   getFeedbackPaginationService,
   deleteFeedbackService,
   createMembershipService,
-  updateMembershipService,
+  updateMembershipAdminService,
   getMembershipsService,
   getMembershipsByIdService,
   getTotalPaymentService,
