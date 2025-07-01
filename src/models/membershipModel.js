@@ -24,7 +24,7 @@ const createMembership = async (data) => {
   }
 }
 
-const updateMembership = async (membershipId, data) => {
+const updateMembershipAdmin = async (membershipId, data) => {
   try {
     const result = await GET_DB().collection(MEMBERSHIP_COLLECTION_NAME).updateOne({
       _id: new ObjectId(membershipId)
@@ -84,7 +84,7 @@ const getMemberships = async () => {
 
 export const membershipModel = {
   createMembership,
-  updateMembership,
+  updateMembershipAdmin,
   findMembershipById,
   findMembershipByTitle,
   getMemberships,

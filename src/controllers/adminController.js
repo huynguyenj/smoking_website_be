@@ -75,11 +75,11 @@ const createMembershipController = async (req, res, next) => {
   }
 }
 
-const updateMembershipController = async (req, res, next) => {
+const updateMembershipAdminController = async (req, res, next) => {
   try {
     const { membershipId } = req.params
     const data = req.body
-    await adminService.updateMembershipService(membershipId, data)
+    await adminService.updateMembershipAdminService(membershipId, data)
     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Update membership successfully!'))
   } catch (error) {
     next(error)
@@ -182,7 +182,7 @@ export const adminController = {
   getFeedbackPaginationController,
   deleteFeedbackController,
   createMembershipController,
-  updateMembershipController,
+  updateMembershipAdminController,
   getMembershipsController,
   getMembershipsByIdController,
   getTotalPaymentController,

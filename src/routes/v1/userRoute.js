@@ -16,6 +16,7 @@ import { commentValidation } from '@/validations/commentValidation'
 import { commentController } from '@/controllers/commentController'
 import { messageController } from '@/controllers/messageController'
 import { achievementController } from '@/controllers/achievementController'
+import { checkExpiredMembership } from '@/middlewares/checkExpiredMembership'
 const Router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 //Public route
@@ -123,5 +124,5 @@ Router.route('/rank')
 
 //Chat AI
 Router.route('/get-advice/:cigaretteId')
-  .get(userController.chatAIController)
+  .get(checkExpiredMembership, userController.chatAIController)
 export const userRoute = Router

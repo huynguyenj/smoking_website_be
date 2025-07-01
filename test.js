@@ -30,3 +30,7 @@
 // //  return {month: key, revenue: value}
 // // }))
 // console.log(new Date(2025, 2, ).getTime())
+
+const startDate = 1751280940672
+const expired_date= 1753872940672
+console.log(new Date(expired_date - startDate).getDay())
