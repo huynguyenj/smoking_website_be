@@ -19,7 +19,7 @@ const saveMessageService = async (senderId, receiverId, text) => {
     const result = await messageModel.saveMessage(data)
     const message = await messageModel.findMessageById(result.insertedId)
     const finalData = {
-      message,
+      ...message,
       sender: {
         image_url: senderIdUser.image_url,
         user_name: senderIdUser.user_name
