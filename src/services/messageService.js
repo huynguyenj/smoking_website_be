@@ -18,18 +18,7 @@ const saveMessageService = async (senderId, receiverId, text) => {
     }
     const result = await messageModel.saveMessage(data)
     const message = await messageModel.findMessageById(result.insertedId)
-    const finalData = {
-      ...message,
-      sender: {
-        image_url: senderIdUser.image_url,
-        user_name: senderIdUser.user_name
-      },
-      receiver: {
-        image_url: receiverIdUser.image_url,
-        user_name: receiverIdUser.user_name
-      }
-    }
-    return finalData
+    return message
   } catch (error) {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
@@ -37,8 +26,23 @@ const saveMessageService = async (senderId, receiverId, text) => {
 
 const getMessageService = async (userId, receiverId) => {
   try {
+    const senderIdUser = await userModel.findOneUserById(userId)
+    if (!senderIdUser) throw new Error('Sender is not existed!')
+    const receiverIdUser = await userModel.findOneUserById(receiverId)
+    if (!receiverIdUser) throw new Error('Receiver is not existed!')
     const result = await messageModel.getMessageHistory(userId, receiverId)
-    return result
+    const data = {
+      ...result,
+      sender: {
+        user_name: senderIdUser.user_name,
+        image_url: senderIdUser.image_url
+      },
+      receiver: {
+        user_name: receiverIdUser.user_name,
+        image_url: receiverIdUser.image_url
+      }
+    }
+    return data
   } catch (error) {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
