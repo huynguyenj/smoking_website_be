@@ -32,7 +32,7 @@ const getMessageService = async (userId, receiverId) => {
     if (!receiverIdUser) throw new Error('Receiver is not existed!')
     const result = await messageModel.getMessageHistory(userId, receiverId)
     const data = {
-      ...result,
+      result,
       sender: {
         user_name: senderIdUser.user_name,
         image_url: senderIdUser.image_url
