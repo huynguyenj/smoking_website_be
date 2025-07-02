@@ -34,10 +34,12 @@ const getMessageService = async (userId, receiverId) => {
     const data = {
       result,
       sender: {
+        _id: senderIdUser._id,
         user_name: senderIdUser.user_name,
         image_url: senderIdUser.image_url
       },
       receiver: {
+        _id: receiverIdUser._id,
         user_name: receiverIdUser.user_name,
         image_url: receiverIdUser.image_url
       }
