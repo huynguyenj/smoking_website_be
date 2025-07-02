@@ -2,7 +2,7 @@ import { messageModel } from '@/models/messageModel'
 import { userModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
-import { ObjectId } from 'mongodb'
+import { ObjectId, UUID } from 'mongodb'
 
 
 const saveMessageService = async (senderId, receiverId, text) => {
@@ -26,22 +26,22 @@ const saveMessageService = async (senderId, receiverId, text) => {
 
 const getMessageService = async (userId, receiverId) => {
   try {
-    const senderIdUser = await userModel.findOneUserById(userId)
-    if (!senderIdUser) throw new Error('Sender is not existed!')
-    const receiverIdUser = await userModel.findOneUserById(receiverId)
-    if (!receiverIdUser) throw new Error('Receiver is not existed!')
+    const user = await userModel.findOneUserById(userId)
+    if (!user) throw new Error('User is not existed!')
+    const userFriend = await userModel.findOneUserById(receiverId)
+    if (!userFriend) throw new Error('User friend is not existed!')
     const result = await messageModel.getMessageHistory(userId, receiverId)
     const data = {
       result,
-      sender: {
-        _id: senderIdUser._id,
-        user_name: senderIdUser.user_name,
-        image_url: senderIdUser.image_url
+      user_info: {
+        _id: user._id,
+        user_name: user.user_name,
+        image_url: user.image_url
       },
-      receiver: {
-        _id: receiverIdUser._id,
-        user_name: receiverIdUser.user_name,
-        image_url: receiverIdUser.image_url
+      friend_info: {
+        _id: userFriend._id,
+        user_name: userFriend.user_name,
+        image_url: userFriend.image_url
       }
     }
     return data
