@@ -172,8 +172,8 @@ const feedbackService = async (userId, data) => {
 }
 
 const paymentService = async (data) => {
-  // const returnURL = env.BUILD_MODE === 'production' ? env.CLIENT_URL_PROD2 : env.CLIENT_URL
-  const returnURL = env.CLIENT_URL
+  const returnURL = env.BUILD_MODE === 'production' ? env.CLIENT_URL_PROD2 : env.CLIENT_URL
+  // const returnURL = env.CLIENT_URL
   const validPayment = VN_PAY.checkPaymentURL(data)
   if (!validPayment) return `${returnURL+'/payment-status?status=invalid'}`
   const { vnp_OrderInfo, vnp_BankCode, vnp_Amount, vnp_ResponseCode } = validPayment
