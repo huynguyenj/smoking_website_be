@@ -24,6 +24,7 @@ const getBlogsPaginationService = async (limit, page, sort) => {
   try {
     const result = await blogModel.getBlogsPagination(limit, page, sort)
     const totalBlogs = await blogModel.totalBlogs()
+    console.log(totalBlogs)
     const totalPages = Math.ceil(totalBlogs / limit)
     const data = {
       result,

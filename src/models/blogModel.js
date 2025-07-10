@@ -95,7 +95,7 @@ const getPrivateBlogsPagination = async (userId, limit, page, sort) => {
 
 const totalBlogs = async () => {
   try {
-    const total = await GET_DB().collection(BLOG_COLLECTION_NAME).countDocuments()
+    const total = await GET_DB().collection(BLOG_COLLECTION_NAME).countDocuments({ isDeleted: false })
     return total
   } catch (error) {
     throw new Error(error.message)
