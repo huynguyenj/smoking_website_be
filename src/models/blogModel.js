@@ -106,7 +106,7 @@ const totalBlogsOfUser = async (userId) => {
   try {
     const total = await GET_DB().collection(BLOG_COLLECTION_NAME).countDocuments({
       user_id: new ObjectId(userId),
-      isDelete: false
+      isDeleted: false
     })
     return total
   } catch (error) {
@@ -118,7 +118,7 @@ const updateBlog = async (userId, blogId, data) => {
   try {
     const result = await GET_DB().collection(BLOG_COLLECTION_NAME).findOneAndUpdate({
       _id: new ObjectId(blogId),
-      isDelete: false,
+      isDeleted: false,
       user_id: new ObjectId(userId)
     },
     {
@@ -135,7 +135,7 @@ const deleteBlog = async (userId, blogId) => {
   try {
     const result = await GET_DB().collection(BLOG_COLLECTION_NAME).findOneAndUpdate({
       _id: new ObjectId(blogId),
-      isDelete: false,
+      isDeleted: false,
       user_id: new ObjectId(userId)
     },
     {
