@@ -46,7 +46,7 @@ const getBlogsPagination = async (limit, page, sort) => {
   try {
     const skip = (page - 1)*limit
     if (!sort) sort = -1
-    const result = await GET_DB().collection(BLOG_COLLECTION_NAME).find().sort({ create_date: sort }).skip(skip).limit(limit).toArray()
+    const result = await GET_DB().collection(BLOG_COLLECTION_NAME).find({ isDeleted: false }).sort({ create_date: sort }).skip(skip).limit(limit).toArray()
     return result
   } catch (error) {
     throw new Error(error.message)
