@@ -7,12 +7,16 @@ import Joi from 'joi'
 const createPlanValidation = async (req, res, next) => {
   const formatData = Joi.object({
     user_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
-    process_stage: Joi.string().valid('start', 'process', 'finish', 'cancel').required(),
+    // process_stage: Joi.array().items(Joi.object({
+    //   start_time: Joi.date().timestamp('javascript').required(),
+    //   end_time: Joi.date().timestamp('javascript').required(),
+    //   expected_result: Joi.string().strict().required().trim(),
+    //   isComplete: Joi.boolean().strict().default(false)
+    // })),
     health_status: Joi.string().trim().allow(null),
     content: Joi.string().trim().required(),
     start_date: Joi.date().timestamp('javascript').required(),
-    expected_result_date: Joi.date().timestamp('javascript').required(),
-    isDeleted: Joi.boolean().strict().default(false)
+    initial_cigarette_id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)
   })
   try {
     await formatData.validateAsync(req.body, { abortEarly: false })
@@ -25,11 +29,16 @@ const createPlanValidation = async (req, res, next) => {
 const updatePlanValidation = async (req, res, next) => {
   try {
     const correctForm = Joi.object({
-      process_stage: Joi.string().valid('start', 'process', 'finish', 'cancel'),
+      user_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
+      process_stage: Joi.array().min(1).items(Joi.object({
+        start_time: Joi.number().strict(),
+        end_time: Joi.number().strict(),
+        expected_result: Joi.number().strict().required(),
+        isCompleted: Joi.boolean().strict().default(false)
+      })),
       health_status: Joi.string().trim().allow(null),
       content: Joi.string().trim(),
-      start_date: Joi.date().timestamp('javascript'),
-      expected_result_date: Joi.date().timestamp('javascript')
+      start_date: Joi.date().timestamp('javascript')
     })
     await correctForm.validateAsync(req.body, { abortEarly:false })
     next()

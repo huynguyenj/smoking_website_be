@@ -40,7 +40,11 @@ const getCigaretteInfoPaginationService = async (id, limit, page, sort) => {
 
 const updateCigaretteService = async (id, cigaretteId, data) => {
   try {
-    const result = await cigaretteModel.updateCigarette(id, cigaretteId, data)
+    const finalData = {
+      ...data,
+      update_date: Date.now()
+    }
+    const result = await cigaretteModel.updateCigarette(id, cigaretteId, finalData)
     if (!result) throw new Error('Update fail!')
     return
   } catch (error) {

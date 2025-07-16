@@ -17,6 +17,8 @@ import { commentController } from '@/controllers/commentController'
 import { messageController } from '@/controllers/messageController'
 import { achievementController } from '@/controllers/achievementController'
 import { checkExpiredMembership } from '@/middlewares/checkExpiredMembership'
+import { initialCigaretteController } from '@/controllers/initialCigarettesStateController'
+import { initialCigaretteValidation } from '@/validations/initialCigarettesValidation'
 const Router = express.Router()
 const upload = multer({ storage: multer.memoryStorage() })
 //Public route
@@ -51,18 +53,28 @@ Router.route('/profile')
   .post(userController.changePasswordController)
 Router.route('/profile/avatar')
   .put(upload.single('profile_image'), userController.updateAvatarController)
+//Initial state cigarettes
+Router.route('/initial-cigarette')
+  .post(initialCigaretteValidation.createInitialCigaretteValidation, initialCigaretteController.createInitialCigaretteController)
+Router.route('/initial-cigarette/pagination')
+  .post(initialCigaretteController.getInitialCigarettePaginationController)
+Router.route('/initial-cigarette/edit/:initialId')
+  .get(initialCigaretteController.getInitialCigaretteInfoController)
+  .put(initialCigaretteValidation.updateInitialCigaretteValidation, initialCigaretteController.updateInitialCigaretteController)
+  .delete(initialCigaretteController.deleteInitialCigaretteController)
 //Plan route
 Router.route('/plan')
   .post(planValidation.createPlanValidation, planController.createPlanController)
   .get(planController.getAllPlanController)
 Router.route('/plan/edit/:id')
+  .post(planController.checkCompleteStageController)
   .put(planValidation.updatePlanValidation, planController.updatePlanController)
   .delete(planController.deletePlanController)
   .get(planController.getPlanDetailController)
 Router.route('/plan/pagination')
   .post(paginationValidate.paginationValidation, planController.getPlanPaginationController)
-Router.route('/plan/recommend/:cigaretteId')
-  .get(planController.getRecommendPlanController)
+// Router.route('/plan/recommend/:cigaretteId')
+//   .get(planController.getRecommendPlanController)
 
 //Cigarette route
 Router.route('/cigarette')
@@ -114,8 +126,8 @@ Router.route('/payment')
   .post(userController.paymentController)
 
 //Achievement route
-Router.route('/achievement')
-  .get(achievementController.smokingAndMoneyAchievementController)
+// Router.route('/achievement')
+//   .get(achievementController.smokingAndMoneyAchievementController)
 
 //Rank
 Router.route('/rank')

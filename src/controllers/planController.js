@@ -58,16 +58,16 @@ const getPlanPaginationController = async (req, res, next) => {
   }
 }
 
-const getRecommendPlanController = async (req, res, next) => {
-  try {
-    const { cigaretteId } = req.params
-    const userId = req.user.id
-    const dataReturn = await planService.getRecommendPlanService(cigaretteId, userId)
-    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', dataReturn))
-  } catch (error) {
-    next(error)
-  }
-}
+// const getRecommendPlanController = async (req, res, next) => {
+//   try {
+//     const { cigaretteId } = req.params
+//     const userId = req.user.id
+//     const dataReturn = await planService.getRecommendPlanService(cigaretteId, userId)
+//     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', dataReturn))
+//   } catch (error) {
+//     next(error)
+//   }
+// }
 
 const getPlanDetailController = async (req, res, next) => {
   try {
@@ -78,12 +78,24 @@ const getPlanDetailController = async (req, res, next) => {
     next(error)
   }
 }
+
+const checkCompleteStageController = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const data = req.body
+    const userId = req.user.id
+    const result = await planService.checkCompleteStageService(id, userId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Check plan successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const planController = {
   createPlanController,
   getAllPlanController,
   updatePlanController,
   deletePlanController,
   getPlanPaginationController,
-  getRecommendPlanController,
-  getPlanDetailController
+  getPlanDetailController,
+  checkCompleteStageController
 }
