@@ -1,15 +1,14 @@
 import ApiError from '@/utils/ApiError'
 import { errorJsonForm } from '@/utils/customErrorMessage'
-import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
 
-const createCigaretteValidation = async (req, res, next) => {
+const createInitialCigaretteValidation = async (req, res, next) => {
   const correctForm = Joi.object({
+    amount_cigarettes: Joi.number().strict().default(0).required(),
     smoking_frequency_per_day: Joi.number().strict().required().default(0),
-    money_consumption_per_day: Joi.number().strict().required().default(0),
-    saving_money: Joi.number().strict().default(0),
-    plan_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)
+    money_each_cigarette: Joi.number().strict().required().default(0),
+    nicotine_evaluation: Joi.number().required().strict().default(0)
   })
   try {
     await correctForm.validateAsync(req.body)
@@ -19,11 +18,12 @@ const createCigaretteValidation = async (req, res, next) => {
   }
 }
 
-const updateCigaretteValidation = async (req, res, next) => {
+const updateInitialCigaretteValidation = async (req, res, next) => {
   const correctForm = Joi.object({
+    amount_cigarettes: Joi.number().strict().default(0).required(),
     smoking_frequency_per_day: Joi.number().strict().required().default(0),
-    money_consumption_per_day: Joi.number().strict().required().default(0),
-    saving_money: Joi.number().strict().default(0)
+    money_each_cigarette: Joi.number().strict().required().default(0),
+    nicotine_evaluation: Joi.number().required().strict().default(0)
   })
   try {
     await correctForm.validateAsync(req.body)
@@ -33,7 +33,7 @@ const updateCigaretteValidation = async (req, res, next) => {
   }
 }
 
-export const cigaretteValidation = {
-  createCigaretteValidation,
-  updateCigaretteValidation
+export const initialCigaretteValidation = {
+  createInitialCigaretteValidation,
+  updateInitialCigaretteValidation
 }

@@ -37,63 +37,59 @@ const getCommentPagination = async (blogId, limit, page, sort) => {
   try {
     const skip = (page - 1) * limit
     if (!sort) sort = -1
-     const result = await GET_DB()
-      .collection(blogModel.BLOG_COLLECTION_NAME)
-      .aggregate([
-        {
-          $match: {
-            _id: new ObjectId(blogId),
-            isDeleted: false
-          }
-        },
-        {
-          $lookup: {
-            from: COMMENT_COLLECTION_NAME,
-            let: { blogId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$blog_id', '$$blogId'] },
-                      { $eq: ['$isDeleted', false] }
-                    ]
-                  }
-                }
-              },
-              { $sort: { created_date: sort } },
-              { $skip: skip },
-              { $limit: limit },
-              // 👉 Add lookup to users
-              {
-                $lookup: {
-                  from: userModel.USER_COLLECTION_NAME,
-                  localField: 'user_id',
-                  foreignField: '_id',
-                  pipeline: [
-                    {
-                      $project: {
-                        _id: 1,
-                        user_name: 1,
-                        image_url: 1,
-                        email: 1
-                      }
-                    }
-                  ],
-                  as: 'userInfo'
-                }
-              },
-              {
-                $unwind: {
-                  path: '$userInfo',
-                  preserveNullAndEmptyArrays: true // optional
+    const result = await GET_DB().collection(blogModel.BLOG_COLLECTION_NAME).aggregate([
+      {
+        $match: {
+          _id: new ObjectId(blogId),
+          isDeleted: false
+        }
+      },
+      {
+        $lookup: {
+          from: COMMENT_COLLECTION_NAME,
+          let: { blogId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$blog_id', '$$blogId'] },
+                    { $eq: ['$isDeleted', false] }
+                  ]
                 }
               }
-            ],
-            as: 'commentList'
-          }
+            },
+            { $sort: { created_date: sort } },
+            { $skip: skip },
+            { $limit: limit },
+            { $lookup: {
+              from: userModel.USER_COLLECTION_NAME,
+              localField: 'user_id',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    user_name: 1,
+                    image_url: 1,
+                    email: 1
+                  }
+                }
+              ],
+              as: 'userInfo'
+            }
+            },
+            {
+              $unwind: {
+                path: '$userInfo',
+                preserveNullAndEmptyArrays: true // optional
+              }
+            }
+          ],
+          as: 'commentList'
         }
-      ])
+      }
+    ])
       .toArray()
     return result[0] || {}
   } catch (error) {

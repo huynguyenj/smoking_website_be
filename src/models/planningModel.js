@@ -8,13 +8,19 @@ import { userModel } from './userModel'
 const PLAN_COLLECTION_NAME = 'planing'
 const PLAN_SCHEMA = Joi.object({
   user_id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
-  process_stage: Joi.string().valid('start', 'process', 'finish', 'cancel').strict().default('start'),
+  process_stage: Joi.array().min(1).items(Joi.object({
+    start_time: Joi.number().strict(),
+    end_time: Joi.number().strict(),
+    expected_result: Joi.number().strict().required(),
+    isCompleted: Joi.boolean().strict().default(false)
+  })),
   health_status: Joi.string().strict().allow(null),
   content: Joi.string().strict().allow(null),
   start_date: Joi.number().strict(),
   expected_result_date: Joi.number().strict(),
   create_by: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
-  isDeleted: Joi.boolean().strict().default(false)
+  isDeleted: Joi.boolean().strict().default(false),
+  initial_cigarette_id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)
 })
 
 const validateBeforeInsert = async (data) => {
@@ -27,7 +33,8 @@ const createPlan = async (id, data) => {
     const finalValidate = {
       ...validateData,
       create_by: new ObjectId(id),
-      user_id: new ObjectId(validateData.user_id)
+      user_id: new ObjectId(validateData.user_id),
+      initial_cigarette_id: new ObjectId(validateData.initial_cigarette_id)
     }
     const result = await GET_DB().collection(PLAN_COLLECTION_NAME).insertOne(finalValidate)
     return result
@@ -162,7 +169,6 @@ const getPlanPagination = async (userId, limit, page, sort) => {
     throw new Error(error)
   }
 }
-
 
 export const planningModel = {
   PLAN_COLLECTION_NAME,

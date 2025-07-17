@@ -7,15 +7,13 @@ import { userModel } from './userModel'
 const CIGARETTE_COLLECTION_NAME = 'cigarettes'
 const CIGARETTE_SCHEMA = Joi.object({
   user_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE),
-  amount: Joi.number().strict().default(0),
   smoking_frequency_per_day: Joi.number().strict().required().default(0),
   money_consumption_per_day: Joi.number().strict().required().default(0),
   saving_money: Joi.number().strict().default(0),
-  nicotine_evaluation: Joi.number().required().strict().default(0),
   create_date: Joi.date().timestamp('javascript').default(Date.now),
   update_date: Joi.date().timestamp('javascript').default(null),
-  no_smoking_date: Joi.number().strict().default(null),
-  isDeleted: Joi.boolean().strict().default(false)
+  isDeleted: Joi.boolean().strict().default(false),
+  plan_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_MESSAGE)
 })
 
 const validateData = async (data) => {
@@ -28,7 +26,8 @@ const createCigarette = async (id, data) => {
     const dataList = await getAllCigaretteInfoById(id)
     const finalData = {
       ...dataValidation,
-      user_id: new ObjectId(id)
+      user_id: new ObjectId(id),
+      plan_id: new ObjectId(dataValidation.plan_id)
     }
 
     const recentCreatedList = dataList['listCigarette']
@@ -144,6 +143,48 @@ const getAllCigarettePagination = async (userId, limit, page, sort) => {
   }
 }
 
+const getCigaretteSpecificStage = async (planId, userId, startTime, endTime) => {
+  try {
+    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).find({
+      user_id: new ObjectId(userId),
+      plan_id: new ObjectId(planId),
+      isDeleted: false,
+      create_date: { $gte: startTime, $lte: endTime }
+    }).toArray()
+    // const result = await GET_DB().collection(planningModel.PLAN_COLLECTION_NAME).aggregate([
+    //   {
+    //     $match: {
+    //       _id: new ObjectId(planId),
+    //       isDeleted: false,
+    //       user_id: new ObjectId(userId)
+    //     }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: CIGARETTE_COLLECTION_NAME,
+    //       let: { planId: '$_id' },
+    //       pipeline: [
+    //         {
+    //           $match: {
+    //             $expr: {
+    //               $and: [
+    //                 { $gte: ['$create_date', startTime] },
+    //                 { $lte: ['$create_date', endTime] }
+    //               ]
+    //             }
+    //           }
+    //         }
+    //       ],
+    //       as: 'cigaretteStage'
+    //     }
+    //   }
+    // ]).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
+
 const countTotalCigarettes = async (user_id) => {
   try {
     const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).countDocuments({ user_id: new ObjectId(user_id), isDeleted: false })
@@ -171,7 +212,6 @@ const countMoneyAndNoSmoking = async (userId) => {
                 $and: [
                   { $eq: ['$user_id', '$$userId'] },
                   { $eq: ['$isDeleted', false] },
-                  { $ne: ['$no_smoking_date', null] },
                   { $ne: ['$saving_money', null] }
                 ]
               }
@@ -229,5 +269,6 @@ export const cigaretteModel = {
   getAllCigarettePagination,
   updateCigarette,
   deleteCigarette,
-  countMoneyAndNoSmoking
+  countMoneyAndNoSmoking,
+  getCigaretteSpecificStage
 }

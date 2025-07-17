@@ -1,36 +1,23 @@
-import { cigaretteModel } from '@/models/cigaretteModel'
 import { rankModel } from '@/models/rankModel'
 import ApiError from '@/utils/ApiError'
-import { REQUIRED_FOR_STAR } from '@/utils/constants'
 import { StatusCodes } from 'http-status-codes'
-const smokingAndMoneyAchievementService = async (userId) => {
+const smokingAndMoneyAchievementService = async (userId, plan) => {
   try {
-    //Get cigarette that have no-smoking-field and saving-money not null
-    const result = await cigaretteModel.countMoneyAndNoSmoking(userId)
-    if (result.listResult.length === 0) throw new Error('You do not have any date off smoke or money saving to evaluate!')
-    let totalSaving = 0
-    let totalDayOutSmoke = 0
-    //Calculate saving and total date that not smoke.
-    result.listResult.forEach((item) => {
-      totalSaving += item.saving_money - item.money_consumption_per_day
-      totalDayOutSmoke++
+    let star = 0
+    let achievement = []
+    plan.process_stage.map((item) => {
+      if (item.isCompleted) {
+        star+=1
+        achievement.push(`You have complete ${star} stage `)
+      }
     })
-    //Condition to have achievement
-    if (totalSaving >= REQUIRED_FOR_STAR.minMoney || totalDayOutSmoke >= REQUIRED_FOR_STAR.minDayNoSmoke ) {
-      const achievement = [`Save ${totalSaving}`, `No smoking in ${totalDayOutSmoke} days`]
-      const data = {
-        star_count: result.listResult.length,
-        achievements: achievement,
-        totalAchievements: achievement.length
-      }
-      await rankModel.createRank(userId, data)
-      return {
-        totalSaving,
-        totalDayOutSmoke
-      }
-    } else {
-      throw new Error('You are not qualify yet. Make sure your money saving is above 100.000VND or date without smoke at least 2!')
+    const data = {
+      star_count: star,
+      achievements: achievement,
+      totalAchievements: achievement.length
     }
+    await rankModel.createRank(userId, data)
+    return
   } catch (error) {
     throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
   }
