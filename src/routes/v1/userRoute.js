@@ -56,6 +56,7 @@ Router.route('/profile/avatar')
 //Initial state cigarettes
 Router.route('/initial-cigarette')
   .post(initialCigaretteValidation.createInitialCigaretteValidation, initialCigaretteController.createInitialCigaretteController)
+  .get(initialCigaretteController.getAllInitialStateController)
 Router.route('/initial-cigarette/pagination')
   .post(initialCigaretteController.getInitialCigarettePaginationController)
 Router.route('/initial-cigarette/edit/:initialId')

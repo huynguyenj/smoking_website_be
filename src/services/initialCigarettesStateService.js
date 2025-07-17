@@ -61,11 +61,20 @@ const deleteInitialCigaretteService = async (id, initialCigaretteId) => {
   }
 }
 
+const getAllInitialStateService = async (userId) => {
+  try {
+    const result = await initialCigarette.getAllInitialState(userId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 
 export const initialCigaretteService = {
   createInitialCigaretteService,
   getInitialCigaretteInfoService,
   getInitialCigaretteInfoPaginationService,
   updateInitialCigaretteService,
-  deleteInitialCigaretteService
+  deleteInitialCigaretteService,
+  getAllInitialStateService
 }
