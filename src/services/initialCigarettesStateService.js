@@ -70,11 +70,21 @@ const getAllInitialStateService = async (userId) => {
   }
 }
 
+const getAllInitialStateOfUserForCoachService = async (userId) => {
+  try {
+    const result = await initialCigarette.getAllInitialStateOfUserForCoach(userId)
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
+
 export const initialCigaretteService = {
   createInitialCigaretteService,
   getInitialCigaretteInfoService,
   getInitialCigaretteInfoPaginationService,
   updateInitialCigaretteService,
   deleteInitialCigaretteService,
-  getAllInitialStateService
+  getAllInitialStateService,
+  getAllInitialStateOfUserForCoachService
 }

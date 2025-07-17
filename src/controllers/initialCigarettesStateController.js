@@ -71,11 +71,22 @@ const getAllInitialStateController = async (req, res, next) => {
   }
 }
 
+const getAllInitialStateOfUserForCoachController = async (req, res, next) => {
+  try {
+    const { userId } = req.params
+    const result = await initialCigaretteService.getAllInitialStateOfUserForCoachService(userId)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get list success!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const initialCigaretteController = {
   createInitialCigaretteController,
   getInitialCigaretteInfoController,
   getInitialCigarettePaginationController,
   deleteInitialCigaretteController,
   updateInitialCigaretteController,
-  getAllInitialStateController
+  getAllInitialStateController,
+  getAllInitialStateOfUserForCoachController
 }
