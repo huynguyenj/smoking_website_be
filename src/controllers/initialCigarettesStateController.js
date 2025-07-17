@@ -61,10 +61,21 @@ const deleteInitialCigaretteController = async (req, res, next) => {
   }
 }
 
+const getAllInitialStateController = async (req, res, next) => {
+  try {
+    const { id } = req.user
+    const result = await initialCigaretteService.getAllInitialStateService(id)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get list success!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const initialCigaretteController = {
   createInitialCigaretteController,
   getInitialCigaretteInfoController,
   getInitialCigarettePaginationController,
   deleteInitialCigaretteController,
-  updateInitialCigaretteController
+  updateInitialCigaretteController,
+  getAllInitialStateController
 }

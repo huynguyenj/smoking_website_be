@@ -111,6 +111,18 @@ const deleteInitialState = async (userId, stateId) => {
   }
 }
 
+const getAllInitialState = async (userId) => {
+  try {
+    const result = await GET_DB().collection(INITIAL_CIGARETTE_NAME).find({
+      user_id: new ObjectId(userId),
+      isDeleted: false
+    }).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const initialCigarette = {
   INITIAL_CIGARETTE_NAME,
   INITIAL_CIGARETTE_SCHEMA,
@@ -120,5 +132,6 @@ export const initialCigarette = {
   deleteInitialState,
   updateInitialState,
   countTotalInitialCigarettes,
-  checkInitialStateByPlanId
+  checkInitialStateByPlanId,
+  getAllInitialState
 }
