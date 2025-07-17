@@ -123,6 +123,18 @@ const getAllInitialState = async (userId) => {
   }
 }
 
+const getAllInitialStateOfUserForCoach = async (userId) => {
+  try {
+    const result = await GET_DB().collection(INITIAL_CIGARETTE_NAME).find({
+      user_id: new ObjectId(userId),
+      isDeleted: false
+    }).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const initialCigarette = {
   INITIAL_CIGARETTE_NAME,
   INITIAL_CIGARETTE_SCHEMA,
@@ -133,5 +145,6 @@ export const initialCigarette = {
   updateInitialState,
   countTotalInitialCigarettes,
   checkInitialStateByPlanId,
-  getAllInitialState
+  getAllInitialState,
+  getAllInitialStateOfUserForCoach
 }
