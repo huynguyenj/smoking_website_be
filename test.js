@@ -1,8 +1,8 @@
 // // Percent amount cigarette need to reduce in specific time
-// const MINIMUM_ADDICTION = 70
-// const MID_ADDICTION = 40
-// const HIGH_ADDICTION = 15
-// const EXTREME_ADDICTION = 10
+const MINIMUM_ADDICTION = 70
+const MID_ADDICTION = 40
+const HIGH_ADDICTION = 15
+const EXTREME_ADDICTION = 10
 // // Percent increase in next stage when previous stage have been completed
 // const STEP_MINIMUM_ADDICTION = 30
 // const STEP_MID_ADDICTION = 20
