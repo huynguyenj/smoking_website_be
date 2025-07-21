@@ -13,6 +13,15 @@ const getAllUserService = async () => {
   }
 }
 
+const createUserAccountService = async (data) => {
+  try {
+    const result = await userModel.insertUserData(data)
+    const accountCreated = await userModel.findOneUserById(result.insertedId)
+    return accountCreated
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
+  }
+}
 
 const changeUserRoleService = async (user_id, data) => {
   try {
@@ -34,7 +43,17 @@ const getUserPaginationService = async (page, limit, sort) => {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message)
   }
 }
-
+const getCoachPaginationService = async (page, limit, sort) => {
+  try {
+    const result = await userModel.getCoachPagination(page, limit, sort)
+    if (!result || result.users.length === 0) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'No users found')
+    }
+    return result
+  } catch (error) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, error.message)
+  }
+}
 const getTotalUserInMonthService = async (month, year) => {
   try {
     const startDate = new Date(year, month - 1, 1).getTime() // make date from this: // 2023-10-01 ==> 1696118400000
@@ -201,5 +220,7 @@ export const adminService = {
   deleteMembershipService,
   getUserDetailService,
   deleteUserService,
-  setActiveUserService
+  setActiveUserService,
+  getCoachPaginationService,
+  createUserAccountService
 }

@@ -2,6 +2,16 @@ import { adminService } from '@/services/adminService'
 import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 
+
+const createUserAccountController = async (req, res, next) => {
+  try {
+    const data = req.body
+    const result = await adminService.createUserAccountService(data)
+    res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Create successfully', result))
+  } catch (error) {
+    next(error)
+  }
+}
 const getAllUserController = async (req, res, next) => {
   try {
     const totalUser = await adminService.getAllUserService()
@@ -26,6 +36,17 @@ const getUserPaginationController = async (req, res, next) => {
   try {
     const { page, limit, sort } = req.body
     const totalUser = await adminService.getUserPaginationService(page, limit, sort)
+    const result = jsonForm.paginationReturn(totalUser.users, limit, page, totalUser.totalPages)
+    res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getCoachPaginationController = async (req, res, next) => {
+  try {
+    const { page, limit, sort } = req.body
+    const totalUser = await adminService.getCoachPaginationService(page, limit, sort)
     const result = jsonForm.paginationReturn(totalUser.users, limit, page, totalUser.totalPages)
     res.status(StatusCodes.OK).json(jsonForm.successJsonMessage(true, 'Get total users per page successfully!', result))
   } catch (error) {
@@ -174,9 +195,11 @@ const setActiveController = async (req, res, next) => {
   }
 }
 export const adminController = {
+  createUserAccountController,
   getAllUserController,
   changeUserRoleController,
   getUserPaginationController,
+  getCoachPaginationController,
   getTotalUserInMonthController,
   getRevenueByYearController,
   getFeedbackPaginationController,

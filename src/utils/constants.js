@@ -23,7 +23,8 @@ export const COOKIES_OPTIONS = {
 
 export const NAME_FOLDER_SUPABASE= {
   blog: 'blog-image',
-  user: 'user-image'
+  user: 'user-image',
+  qr_code: 'qr-code'
 }
 
 export const REQUIRED_FOR_STAR = {
