@@ -92,3 +92,5 @@ const EXTREME_ADDICTION = 10
 //       }
 // })
 // console.log(data)
+
+console.log(Date.now())

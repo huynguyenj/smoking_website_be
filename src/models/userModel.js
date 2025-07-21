@@ -226,6 +226,31 @@ const searchUser = async (query) => {
   }
 }
 
+const getCoachPagination = async (page, limit, sort) => {
+  try {
+    const skip = (page - 1) * limit
+    if (!sort) sort = -1
+    const users = await GET_DB().collection(USER_COLLECTION_NAME).find({
+      role: { $eq: 'coach' }
+    }).project({
+      user_name: 1,
+      full_name: 1,
+      _id: 1,
+      profile: 1,
+      image_url: 1,
+      role: 1
+    }).skip(skip).limit(limit).sort({ created_date: sort }).toArray()
+    const totalUsers = await GET_DB().collection(USER_COLLECTION_NAME).countDocuments({ role: { $eq: 'coach' } })
+    const totalPages = Math.ceil(totalUsers/limit)
+    return {
+      users,
+      totalPages
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const getFeedback = async (limit, page, sort) => {
   try {
     const skip = (page-1)*limit
@@ -288,6 +313,7 @@ const updateMembership = async (userId, membershipName) => {
     throw new Error(error)
   }
 }
+
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_SCHEMA,
@@ -306,5 +332,6 @@ export const userModel = {
   updateMembership,
   deleteUser,
   setActiveUser,
-  findAllEmail
+  findAllEmail,
+  getCoachPagination
 }
