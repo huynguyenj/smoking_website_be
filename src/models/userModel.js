@@ -218,7 +218,9 @@ const searchUser = async (query) => {
       user_name: 1,
       full_name: 1,
       _id: 1,
-      profile: 1
+      profile: 1,
+      image_url: 1,
+      role: 1
     }).limit(5).toArray()
     return result
   } catch (error) {
