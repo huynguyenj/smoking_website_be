@@ -36,14 +36,19 @@ const createCigarette = async (userId, data) => {
     }
 
     const recentlyCreatedOne = recentCreatedList[recentCreatedList.length - 1]
-    const isPlanMatchWithNewCreate = recentlyCreatedOne.plan_id === finalData.plan_id
+    const isPlanMatchWithNewCreate = String(recentlyCreatedOne.plan_id) === String(finalData.plan_id)
     const isADay = dataValidation.create_date - recentlyCreatedOne.create_date
     const aDay = 60 * 60 * 24 * 1000
 
-    if (isADay > aDay && !isPlanMatchWithNewCreate) {
+    if (!isPlanMatchWithNewCreate) {
       const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
       return result
-    } else {
+    }
+    else if (isADay > aDay) {
+      const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
+      return result
+    }
+    else {
       throw new Error('You can not create more than a cigarette in a day')
     }
   } catch (error) {
