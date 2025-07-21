@@ -91,7 +91,8 @@ const getFriendList = async (listFriendId) => {
         full_name: 1,
         user_name: 1,
         profile: 1,
-        image_url: 1
+        image_url: 1,
+        role: 1
       }
     }
     ).toArray()
