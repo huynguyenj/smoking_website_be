@@ -20,16 +20,15 @@ const validateData = async (data) => {
   return await CIGARETTE_SCHEMA.validateAsync(data)
 }
 
-const createCigarette = async (id, data) => {
+const createCigarette = async (userId, data) => {
   try {
     const dataValidation = await validateData(data)
-    const dataList = await getAllCigaretteInfoById(id)
+    const dataList = await getAllCigaretteInfoById(userId)
     const finalData = {
       ...dataValidation,
-      user_id: new ObjectId(id),
+      user_id: new ObjectId(userId),
       plan_id: new ObjectId(dataValidation.plan_id)
     }
-
     const recentCreatedList = dataList['listCigarette']
     if (recentCreatedList.length === 0) {
       const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
@@ -37,10 +36,11 @@ const createCigarette = async (id, data) => {
     }
 
     const recentlyCreatedOne = recentCreatedList[recentCreatedList.length - 1]
+    const isPlanMatchWithNewCreate = recentlyCreatedOne.plan_id
     const isADay = dataValidation.create_date - recentlyCreatedOne.create_date
     const aDay = 60 * 60 * 24 * 1000
 
-    if (isADay > aDay) {
+    if (isADay > aDay && !isPlanMatchWithNewCreate) {
       const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).insertOne(finalData)
       return result
     } else {
