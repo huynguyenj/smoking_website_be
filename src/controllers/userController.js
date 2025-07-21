@@ -6,7 +6,7 @@ import { COOKIES_OPTIONS } from '@/utils/constants'
 import { jsonForm } from '@/utils/formatReturnJson'
 import { StatusCodes } from 'http-status-codes'
 import { memberShipService } from '@/services/membershipService'
-import { initialCigarette } from '@/models/initialCigarettesModel'
+import { cigaretteService } from '@/services/cigarettesService'
 
 const registerController = async (req, res, next) => {
   try {
@@ -180,9 +180,9 @@ const getUserMembershipController = async (req, res, next) => {
 const chatAIController = async (req, res, next) => {
   try {
     const { cigaretteId } = req.params
-    const dataReturn = await initialCigarette.getInitialStateById(cigaretteId)
+    const dataReturn = await cigaretteService.getCigaretteDetailService(cigaretteId)
 
-    const prompt = `smoking per day ${dataReturn.smoking_frequency_per_day} times, money spent ${dataReturn.money_consumption_per_day} VND, nicotine evaluation ${dataReturn.nicotine_evaluation} / 10`
+    const prompt = `smoking per day ${dataReturn.smoking_frequency_per_day} times, money spent ${dataReturn.money_consumption_per_day} VND, money saving ${dataReturn.saving_money}`
 
     const response = await chatGPT.generateRecommendPlan(prompt)
     res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Result', response))
