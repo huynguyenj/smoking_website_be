@@ -36,7 +36,7 @@ const createCigarette = async (userId, data) => {
     }
 
     const recentlyCreatedOne = recentCreatedList[recentCreatedList.length - 1]
-    const isPlanMatchWithNewCreate = recentlyCreatedOne.plan_id
+    const isPlanMatchWithNewCreate = recentlyCreatedOne.plan_id === finalData.plan_id
     const isADay = dataValidation.create_date - recentlyCreatedOne.create_date
     const aDay = 60 * 60 * 24 * 1000
 
