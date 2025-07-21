@@ -3,7 +3,6 @@ import { OBJECT_ID_MESSAGE, OBJECT_ID_RULE } from '@/utils/validators'
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { userModel } from './userModel'
-import { planningModel } from './planningModel'
 
 const CIGARETTE_COLLECTION_NAME = 'cigarettes'
 const CIGARETTE_SCHEMA = Joi.object({
