@@ -156,34 +156,29 @@ const getCigaretteSpecificStage = async (planId, userId, startTime, endTime) => 
       isDeleted: false,
       create_date: { $gte: startTime, $lte: endTime }
     }).toArray()
-    // const result = await GET_DB().collection(planningModel.PLAN_COLLECTION_NAME).aggregate([
-    //   {
-    //     $match: {
-    //       _id: new ObjectId(planId),
-    //       isDeleted: false,
-    //       user_id: new ObjectId(userId)
-    //     }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: CIGARETTE_COLLECTION_NAME,
-    //       let: { planId: '$_id' },
-    //       pipeline: [
-    //         {
-    //           $match: {
-    //             $expr: {
-    //               $and: [
-    //                 { $gte: ['$create_date', startTime] },
-    //                 { $lte: ['$create_date', endTime] }
-    //               ]
-    //             }
-    //           }
-    //         }
-    //       ],
-    //       as: 'cigaretteStage'
-    //     }
-    //   }
-    // ]).toArray()
+    return result
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
+
+const getCigaretteSpecificStageChart = async (planId, userId, startTime, endTime) => {
+  try {
+    const result = await GET_DB().collection(CIGARETTE_COLLECTION_NAME).find({
+      user_id: new ObjectId(userId),
+      plan_id: new ObjectId(planId),
+      isDeleted: false,
+      create_date: { $gte: startTime, $lte: endTime }
+    },
+    {
+      projection: {
+        _id: 0,
+        smoking_frequency_per_day: 1,
+        money_consumption_per_day: 1,
+        saving_money: 1
+      }
+    }
+    ).toArray()
     return result
   } catch (error) {
     throw new Error(error.message)
@@ -275,5 +270,6 @@ export const cigaretteModel = {
   updateCigarette,
   deleteCigarette,
   countMoneyAndNoSmoking,
-  getCigaretteSpecificStage
+  getCigaretteSpecificStage,
+  getCigaretteSpecificStageChart
 }

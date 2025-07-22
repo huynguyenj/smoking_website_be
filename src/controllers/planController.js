@@ -58,17 +58,6 @@ const getPlanPaginationController = async (req, res, next) => {
   }
 }
 
-// const getRecommendPlanController = async (req, res, next) => {
-//   try {
-//     const { cigaretteId } = req.params
-//     const userId = req.user.id
-//     const dataReturn = await planService.getRecommendPlanService(cigaretteId, userId)
-//     res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(StatusCodes.ACCEPTED, 'Get data success!', dataReturn))
-//   } catch (error) {
-//     next(error)
-//   }
-// }
-
 const getPlanDetailController = async (req, res, next) => {
   try {
     const { id } = req.params
@@ -90,6 +79,18 @@ const checkCompleteStageController = async (req, res, next) => {
     next(error)
   }
 }
+
+const getDetailProcessPerStageInPlanController = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const data = req.body
+    const userId = req.user.id
+    const result = await planService.getDetailProcessPerStageInPlanService(id, userId, data)
+    res.status(StatusCodes.ACCEPTED).json(jsonForm.successJsonMessage(true, 'Get data plan process successfully!', result))
+  } catch (error) {
+    next(error)
+  }
+}
 export const planController = {
   createPlanController,
   getAllPlanController,
@@ -97,5 +98,6 @@ export const planController = {
   deletePlanController,
   getPlanPaginationController,
   getPlanDetailController,
-  checkCompleteStageController
+  checkCompleteStageController,
+  getDetailProcessPerStageInPlanController
 }
