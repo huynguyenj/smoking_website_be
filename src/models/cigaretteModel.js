@@ -175,7 +175,8 @@ const getCigaretteSpecificStageChart = async (planId, userId, startTime, endTime
         _id: 0,
         smoking_frequency_per_day: 1,
         money_consumption_per_day: 1,
-        saving_money: 1
+        saving_money: 1,
+        create_date: 1
       }
     }
     ).toArray()
