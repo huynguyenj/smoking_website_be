@@ -1,5 +1,4 @@
 import { salaryModel } from '@/models/salaryModel'
-import { userModel } from '@/models/userModel'
 import { supabaseMethod } from '@/providers/supabase'
 import { NAME_FOLDER_SUPABASE } from '@/utils/constants'
 import ApiError from '@/utils/ApiError'
@@ -7,7 +6,7 @@ import { StatusCodes } from 'http-status-codes'
 
 const createSalaryService = async (userId, data, file) => {
   try {
-    const isUserExisted = await userModel.findOneUserById(userId)
+    const isUserExisted = await salaryModel.getDetailSalary(userId)
     if (isUserExisted) throw new Error('This user already create salary!')
     const imageUrl = await supabaseMethod.uploadAFile(file, NAME_FOLDER_SUPABASE.qr_code, userId)
     const finalData = {
