@@ -22,6 +22,7 @@ const changeUserRoleController = async (req, res, next) => {
   }
 }
 
+
 const getUserPaginationController = async (req, res, next) => {
   try {
     const { page, limit, sort } = req.body
