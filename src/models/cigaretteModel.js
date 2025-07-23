@@ -104,10 +104,25 @@ const getAllCigaretteInfoById = async (id) => {
   }
 }
 
-const getAllCigarettePagination = async (userId, limit, page, sort) => {
+const getAllCigarettePagination = async (userId, limit, page, sort, filter) => {
   try {
     const skipPreviousData = (page - 1) * limit
     if (!sort) sort = -1
+    const exprConditions = [
+      { $eq: ['$user_id', '$$userIdInUserCollection'] },
+      { $eq: ['$isDeleted', false] }
+    ]
+    if (filter?.planId) {
+      exprConditions.push({ $eq: ['$plan_id', new ObjectId(filter.planId)] })
+    }
+    if (filter?.date) {
+      exprConditions.push({
+        $and: [
+          { $gte: ['$create_date', filter.date.start_time] },
+          { $lte: ['$create_date', filter.date.end_time] }
+        ]
+      })
+    }
     const result =await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -122,10 +137,7 @@ const getAllCigarettePagination = async (userId, limit, page, sort) => {
           pipeline:[{
             $match:{
               $expr:{
-                $and:[
-                  { $eq: ['$user_id', '$$userIdInUserCollection'] },
-                  { $eq: ['$isDeleted', false] }
-                ]
+                $and:exprConditions
               }
             }
           },

@@ -23,9 +23,9 @@ const getAllCigaretteInfoService = async (id) => {
 }
 
 
-const getCigaretteInfoPaginationService = async (id, limit, page, sort) => {
+const getCigaretteInfoPaginationService = async (id, limit, page, sort, filter) => {
   try {
-    const paginationData = await cigaretteModel.getAllCigarettePagination(id, limit, page, sort)
+    const paginationData = await cigaretteModel.getAllCigarettePagination(id, limit, page, sort, filter)
     const totalData = await cigaretteModel.countTotalCigarettes(id)
     const totalPage = Math.ceil(totalData / limit)
     return {

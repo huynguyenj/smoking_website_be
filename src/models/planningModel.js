@@ -130,10 +130,26 @@ const countTotalPlan = async (userId) => {
     throw new Error(error)
   }
 }
-const getPlanPagination = async (userId, limit, page, sort) => {
+const getPlanPagination = async (userId, limit, page, sort, filter) => {
   try {
     const skip = (page - 1) * limit
     if (!sort) sort = -1
+    const exprConditions = [
+      { $eq: ['$user_id', '$$userId'] },
+      { $eq: ['$isDeleted', false] }
+    ]
+
+    if (filter?.initial_cigarette_id) {
+      exprConditions.push({ $eq: ['$initial_cigarette_id', new ObjectId(filter.initial_cigarette_id)] })
+    }
+    if (filter?.date) {
+      exprConditions.push({
+        $and: [
+          { $gte: ['$start_date', filter.date.start_time] },
+          { $lte: ['$start_date', filter.date.end_time] }
+        ]
+      })
+    }
     const result = await GET_DB().collection(userModel.USER_COLLECTION_NAME).aggregate([
       {
         $match: {
@@ -149,10 +165,7 @@ const getPlanPagination = async (userId, limit, page, sort) => {
             {
               $match: {
                 $expr:{
-                  $and:[
-                    { $eq: ['$user_id', '$$userId'] },
-                    { $eq: ['$isDeleted', false] }
-                  ]
+                  $and:exprConditions
                 }
               }
             },
