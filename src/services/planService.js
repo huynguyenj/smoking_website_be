@@ -77,9 +77,9 @@ const deletePlanService = async (planId, userId) => {
   }
 }
 
-const getPlanPaginationService = async (user_id, limit, page, sort) => {
+const getPlanPaginationService = async (user_id, limit, page, sort, filter) => {
   try {
-    const data = await planningModel.getPlanPagination(user_id, limit, page, sort)
+    const data = await planningModel.getPlanPagination(user_id, limit, page, sort, filter)
     const totalPlan = await planningModel.countTotalPlan(user_id)
     const totalPage = Math.ceil(totalPlan / limit)
     return {

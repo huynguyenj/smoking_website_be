@@ -26,9 +26,9 @@ const getInitialCigaretteInfoController = async (req, res, next) => {
 
 const getInitialCigarettePaginationController = async (req, res, next) => {
   try {
-    const { limit, page, sort } = req.body
+    const { limit, page, sort, filter } = req.body
     const { id } = req.user
-    const dataReturn = await initialCigaretteService.getInitialCigaretteInfoPaginationService(id, limit, page, sort)
+    const dataReturn = await initialCigaretteService.getInitialCigaretteInfoPaginationService(id, limit, page, sort, filter)
     const result = jsonForm.paginationReturn(dataReturn.paginationData, limit, page, dataReturn.totalPage)
     res.status(StatusCodes.CREATED).json(jsonForm.successJsonMessage(true, 'Get cigarettes pagination successfully!', result))
   } catch (error) {

@@ -9,7 +9,8 @@ const paginationValidation = async (req, res, next) => {
       page: Joi.number().integer().min(1).default(1).required(),
       limit: Joi.number().integer().default(5).required(),
       sort: Joi.number().default(-1),
-      sortName: Joi.string().default('')
+      sortName: Joi.string().default(''),
+      filter: Joi.object().strict()
     })
     await paginationSchema.validateAsync(req.body, { abortEarly: false })
     next()

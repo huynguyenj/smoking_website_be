@@ -54,14 +54,24 @@ const checkInitialStateByPlanId = async (initialId) => {
   }
 }
 
-const getInitialStatePagination = async (userId, limit, page, sort) => {
+const getInitialStatePagination = async (userId, limit, page, sort, filter) => {
   try {
     const skipPreviousData = (page - 1) * limit
     if (!sort) sort = -1
-    const result = await GET_DB().collection(INITIAL_CIGARETTE_NAME).find({
-      user_id: new ObjectId(userId),
-      isDeleted: false
-    }).skip(skipPreviousData).limit(limit).sort({ create_date: sort }).toArray()
+    let filterData = {}
+    if (filter?.date) {
+      filterData = {
+        user_id: new ObjectId(userId),
+        isDeleted: false,
+        create_date: filter.date.start_time
+      }
+    } else {
+      filterData = {
+        user_id: new ObjectId(userId),
+        isDeleted: false
+      }
+    }
+    const result = await GET_DB().collection(INITIAL_CIGARETTE_NAME).find(filterData).skip(skipPreviousData).limit(limit).sort({ create_date: sort }).toArray()
     return result || []
   } catch (error) {
     throw new Error(error.message)

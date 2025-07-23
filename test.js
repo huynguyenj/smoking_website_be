@@ -93,4 +93,9 @@ const EXTREME_ADDICTION = 10
 // })
 // console.log(data)
 
-console.log(Date.now())
+// const exprConditions = [
+//   { $eq: ['$user_id', '$$userIdInUserCollection'] },
+//   { $eq: ['$isDeleted', false] }
+// ];
+
+// console.log(exprConditions)
