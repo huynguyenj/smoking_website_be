@@ -108,8 +108,19 @@ const getAllPlan = async (id) => {
       {
         $lookup:{
           from: PLAN_COLLECTION_NAME,
-          localField: '_id',
-          foreignField: 'user_id',
+          let: { userId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr:{
+                  $and:[
+                    { $eq: ['$user_id', '$$userId'] },
+                    { $eq: ['$isDeleted', false] }
+                  ]
+                }
+              }
+            }
+          ],
           as: 'planList'
         }
       }
