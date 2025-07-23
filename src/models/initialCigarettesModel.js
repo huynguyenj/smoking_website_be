@@ -63,7 +63,7 @@ const getInitialStatePagination = async (userId, limit, page, sort, filter) => {
       filterData = {
         user_id: new ObjectId(userId),
         isDeleted: false,
-        create_date: filter.date.start_time
+        create_date: { $gte: filter.date.start_time }
       }
     } else {
       filterData = {
